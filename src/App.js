@@ -9,8 +9,8 @@ function App() {
       <Header></Header>
       <Container>
         <SliderWrapper>
-          <Slider title={"Recomended For You"} />
-          <Slider title={"New Books"} />
+          <Slider title={"Recomended For You"} colorClass="blue" />
+          <Slider title={"New Books"} colorClass="orange" />
         </SliderWrapper>
       </Container>
     </div>

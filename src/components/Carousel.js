@@ -4,9 +4,9 @@ import SliderItem from "./SliderItem";
 
 import React from "react";
 
-const Slider = ({ title }) => {
+const Slider = ({ title, colorClass }) => {
   return (
-    <CarouselContainer>
+    <CarouselContainer className={colorClass}>
       <Title>{title}</Title>
       <Carousel itemsToShow={3}>
         <SliderItem></SliderItem>
@@ -29,13 +29,20 @@ const Slider = ({ title }) => {
 export default Slider;
 
 const CarouselContainer = styled.div`
+  background-size: cover;
   padding-top: 40px;
   background-color: #6c5dd480;
   padding: 40px 20px 20px;
-  border-radius: 30px;
+  border-radius: 60px;
   border: 1px solid transparent;
   width: 46%;
   position: relative;
+  &.orange {
+    background-image: url("/images/bg1.png");
+  }
+  &.blue {
+    background-image: url("/images/bg2.png");
+  }
   .rec-arrow-left {
     position: absolute;
     z-index: 1;

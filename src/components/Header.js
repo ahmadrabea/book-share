@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBookmark } from "@fortawesome/free-regular-svg-icons";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
 
 const Header = () => {
@@ -23,8 +22,10 @@ const Header = () => {
               <img src="/images/userAccount.jpg"></img>
             </UserAccount>
             <AddBook>
-              <FontAwesomeIcon icon={faBookmark} />
-              Add book
+              <div>
+                <img src="/images/add-book-icon.png" />
+              </div>
+              <span>Add book</span>
             </AddBook>
           </Buttons>
         </RightBlock>
@@ -45,7 +46,7 @@ const Nav = styled.nav`
   top: 0;
   left: 0;
   right: 0;
-  height: 70px;
+  height: 100px;
   background-color: white;
   display: flex;
   justify-content: center;
@@ -58,6 +59,7 @@ const Logo = styled.a`
   height: 50px;
   display: inline-block;
   display: flex;
+  cursor: pointer;
   img {
     display: block;
     width: 100%;
@@ -77,9 +79,13 @@ const Links = styled.div`
     color: black;
     font-size: 20px;
     font-weight: 600;
+    transition: 300ms ease-in-out;
     :last-child {
       border-right: 1px solid #00000029;
       margin-right: 20px;
+    }
+    :hover {
+      color: #6c5dd4;
     }
   }
 `;
@@ -94,7 +100,16 @@ const Notification = styled.button`
   border-radius: 15px;
   border: none;
   background-color: #f0edfd;
+  transition: 150ms ease-in-out;
+  cursor: pointer;
+  :hover {
+    background-color: #6c5dd4;
+    svg {
+      color: #f0edfd;
+    }
+  }
   svg {
+    transition: 150ms ease-in-out;
     color: #6c5dd4;
     font-size: 25px;
   }
@@ -102,12 +117,17 @@ const Notification = styled.button`
 const UserAccount = styled.div`
   width: 50px;
   height: 50px;
+  cursor: pointer;
   img {
     border-radius: 15px;
     width: 100%;
   }
 `;
 const AddBook = styled.button`
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   height: 50px;
   padding: 0px 20px;
   border-radius: 15px;
@@ -117,8 +137,8 @@ const AddBook = styled.button`
   border: none;
   font-size: 16px;
   font-weight: 500;
-  svg {
-    padding-right: 5px;
+  div {
+    display: flex;
   }
 `;
 
