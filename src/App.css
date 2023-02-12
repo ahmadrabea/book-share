@@ -1,3 +1,6 @@
 * {
   font-family: "cairo", sans-serif;
 }
+body {
+  padding-top: 100px;
+}
