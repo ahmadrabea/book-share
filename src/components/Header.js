@@ -37,7 +37,7 @@ const Container = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 0 36px;
-  width: 1920px;
+  width: 1400px;
 `;
 
 const Nav = styled.nav`
@@ -113,7 +113,7 @@ const AddBook = styled.button`
   border-radius: 15px;
   color: white;
   background-color: #6c5dd4;
-  box-shadow: 0px 10px 20px #6c5dd480;
+  box-shadow: 0px 1px 10px #6c5dd480;
   border: none;
   font-size: 16px;
   font-weight: 500;

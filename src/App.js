@@ -25,7 +25,7 @@ const SliderWrapper = styled.div`
   align-items: center;
   gap: 30px;
   padding: 0 36px;
-  width: 1920px;
+  width: 1400px;
 `;
 
 const Container = styled.div`

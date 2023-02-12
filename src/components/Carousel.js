@@ -34,7 +34,7 @@ const CarouselContainer = styled.div`
   padding: 40px 20px 20px;
   border-radius: 30px;
   border: 1px solid transparent;
-  width: 35%;
+  width: 46%;
   position: relative;
   .rec-arrow-left {
     position: absolute;
