@@ -37,6 +37,9 @@ const CarouselContainer = styled.div`
   border: 1px solid transparent;
   width: 46%;
   position: relative;
+  @media (max-width: 1350px) {
+    width: 100%;
+  }
   &.orange {
     background-image: url("/images/bg1.png");
   }
@@ -49,6 +52,8 @@ const CarouselContainer = styled.div`
     top: 210px;
     left: 15px;
     background-color: white;
+    padding-top: 3px;
+    padding-right: 4px;
   }
   .rec-arrow-right {
     position: absolute;
@@ -56,6 +61,8 @@ const CarouselContainer = styled.div`
     top: 210px;
     right: 15px;
     background-color: white;
+    padding-top: 3px;
+    padding-left: 4px;
   }
   .rec-pagination {
     display: none;

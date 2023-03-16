@@ -1,8 +1,12 @@
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
+import UserAccountDropDown from "./UserAccountDropDown";
+import { useState } from "react";
 
 const Header = () => {
+  const [isUserAccountDropDownDisplayed, setIsUserAccountDropDownDisplayed] =
+    useState(false);
   return (
     <Nav>
       <Container>
@@ -18,9 +22,17 @@ const Header = () => {
             <Notification>
               <FontAwesomeIcon icon={faBell} />
             </Notification>
-            <UserAccount>
+            <UserAccount
+              onClick={() => {
+                setIsUserAccountDropDownDisplayed(
+                  !isUserAccountDropDownDisplayed
+                );
+              }}
+            >
               <img src="/images/userAccount.jpg"></img>
+              {isUserAccountDropDownDisplayed && <UserAccountDropDown />}
             </UserAccount>
+
             <AddBook>
               <div>
                 <img src="/images/add-book-icon.png" />
@@ -118,6 +130,7 @@ const UserAccount = styled.div`
   width: 50px;
   height: 50px;
   cursor: pointer;
+  position: relative;
   img {
     border-radius: 15px;
     width: 100%;
