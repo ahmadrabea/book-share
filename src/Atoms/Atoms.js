@@ -5,6 +5,10 @@ const Atoms = {
     key: "loginState",
     default: false,
   }),
+  tokenState: atom({
+    key: "token",
+    default: "",
+  }),
 };
 
 export default Atoms;

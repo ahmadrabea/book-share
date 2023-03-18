@@ -1,9 +1,10 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import colors from "../../assets/colors";
 import Atoms from "../../Atoms/Atoms";
+import doRequest from "../../Service/doRequest";
 import { H2 } from "../../Utils/Utils";
 
 const SignIn = () => {
@@ -11,15 +12,29 @@ const SignIn = () => {
   const passwordRef = useRef();
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(Atoms.loggedInState);
+  const [token, setToken] = useRecoilState(Atoms.tokenState);
+  const [error, setError] = useState(false);
+
+  const handleSuccessfulLogin = (data) => {
+    setToken(data.token);
+    setIsLoggedIn(true);
+    navigate("/home");
+  };
+  const handleFailedLogin = () => {};
 
   const handleSignIn = () => {
-    if (
-      emailRef.current.value === "admin" &&
-      passwordRef.current.value === "admin"
-    ) {
-      setIsLoggedIn(true);
-      navigate("/home");
-    }
+    doRequest(
+      "http://127.0.0.1:8000/account/login/",
+      "POST",
+      {
+        username: emailRef.current.value,
+        password: passwordRef.current.value,
+      },
+      (data) => {
+        handleSuccessfulLogin(data);
+      },
+      handleFailedLogin
+    );
   };
   return (
     <SignInContainer>
