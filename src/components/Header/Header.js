@@ -3,10 +3,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
 import UserAccountDropDown from "./UserAccountDropDown";
 import { useState } from "react";
+import { useRecoilState } from "recoil";
+import Atoms from "../../Atoms/Atoms";
 
 const Header = () => {
   const [isUserAccountDropDownDisplayed, setIsUserAccountDropDownDisplayed] =
     useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useRecoilState(Atoms.loggedInState);
   return (
     <Nav>
       <Container>
@@ -16,29 +19,43 @@ const Header = () => {
         <RightBlock>
           <Links>
             <a href="#">Home</a>
-            <a href="#">Your library</a>
+            {isLoggedIn ? (
+              <a href="#">Your library</a>
+            ) : (
+              <a href="#">Discover</a>
+            )}
           </Links>
           <Buttons>
-            <Notification>
-              <FontAwesomeIcon icon={faBell} />
-            </Notification>
-            <UserAccount
-              onClick={() => {
-                setIsUserAccountDropDownDisplayed(
-                  !isUserAccountDropDownDisplayed
-                );
-              }}
-            >
-              <img src="/images/userAccount.jpg"></img>
-              {isUserAccountDropDownDisplayed && <UserAccountDropDown />}
-            </UserAccount>
-
-            <AddBook>
-              <div>
-                <img src="/images/add-book-icon.png" />
-              </div>
-              <span>Add book</span>
-            </AddBook>
+            {isLoggedIn ? (
+              <>
+                <Notification>
+                  <FontAwesomeIcon icon={faBell} />
+                </Notification>
+                <UserAccount
+                  onClick={() => {
+                    setIsUserAccountDropDownDisplayed(
+                      !isUserAccountDropDownDisplayed
+                    );
+                  }}
+                >
+                  <img src="/images/userAccount.jpg"></img>
+                  {isUserAccountDropDownDisplayed && <UserAccountDropDown />}
+                </UserAccount>
+                <AddBook>
+                  <div>
+                    <img src="/images/add-book-icon.png" />
+                  </div>
+                  <span>Add book</span>
+                </AddBook>{" "}
+              </>
+            ) : (
+              <AddBook>
+                <div>
+                  <img src="/images/signin.svg" />
+                </div>
+                <span>Sign Up</span>
+              </AddBook>
+            )}
           </Buttons>
         </RightBlock>
       </Container>

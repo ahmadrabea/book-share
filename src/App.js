@@ -1,8 +1,14 @@
-import HomePage from "./pages/Home";
 import "./App.css";
+import { RouterProvider } from "react-router-dom";
+import router from "./Router/Router";
+import { RecoilRoot } from "recoil";
 
 function App() {
-  return <HomePage />;
+  return (
+    <RecoilRoot>
+      <RouterProvider router={router} />
+    </RecoilRoot>
+  );
 }
 
 export default App;

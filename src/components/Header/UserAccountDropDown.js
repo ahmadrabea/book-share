@@ -1,13 +1,22 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
+import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import colors from "../../assets/colors";
+import Atoms from "../../Atoms/Atoms";
 
 const UserAccountDropDown = () => {
+  const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useRecoilState(Atoms.loggedInState);
+  const handleSignOut = () => {
+    setIsLoggedIn(false);
+    navigate("/");
+  };
   return (
     <Ul>
       <Li>WishList</Li>
       <Li>Your Profile</Li>
-      <Li>Sign Out</Li>
+      <Li onClick={handleSignOut}>Sign Out</Li>
     </Ul>
   );
 };
