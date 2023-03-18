@@ -5,6 +5,12 @@ export const Row = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  &.start {
+    justify-content: flex-start;
+  }
+  &.alignedStart {
+    align-items: flex-start;
+  }
 `;
 export const Column = styled.div`
   display: flex;
@@ -14,4 +20,10 @@ export const Column = styled.div`
   &.start {
     align-items: flex-start;
   }
+`;
+
+export const H2 = styled.h2`
+  color: black;
+  font-size: 30px;
+  font-weight: bold;
 `;

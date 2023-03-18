@@ -71,9 +71,10 @@ const FeedCardContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   gap: 30px;
-  width: 1180px;
+  width: 1056px;
   border-radius: 25px;
   border: 1px solid ${colors.lightGray};
+  margin-bottom: 15px;
 `;
 const LeftBlock = styled.div`
   padding: 35px;
