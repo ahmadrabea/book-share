@@ -38,8 +38,8 @@ const Container = styled.div`
 `;
 
 const FirstRow = styled.div`
-  position: relative;
-  bottom: 0;
+  position: fixed;
+  bottom: 50px;
   left: 0;
   right: 0;
   height: 90px;
@@ -54,7 +54,7 @@ const FirstRow = styled.div`
   }
 `;
 const SecondRow = styled.div`
-  position: relative;
+  position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
@@ -85,31 +85,3 @@ const RightBlock = styled.div`
 `;
 
 export default Footer;
-
-// const Footer = () => {
-//   return (
-//     <FooterContainer>
-//       <Container>
-//         <Column>
-//           <Row className="first">
-//             <Column>
-//               <Logo>
-//                 <img src="/images/logo.png" alt="book share logo" />
-//               </Logo>
-//             </Column>
-//             <Row>
-//               <Facebook className="margin" />
-//               <Twitter />
-//             </Row>
-//           </Row>
-//           <Row className="second">
-//             <span>Book Share website - © 2023 all rights reserved</span>
-//             <span>Made by Hamza Za'atra and Ahmad Abu Rabea</span>
-//           </Row>
-//         </Column>
-//       </Container>
-//     </FooterContainer>
-//   );
-// };
-
-// export default Footer;
