@@ -9,6 +9,7 @@ import {
 import Home from "../pages/Home";
 import SignInPage from "../pages/SignIn";
 import RegistrationPage from "../pages/Registration";
+import ForgetPasswordPage from "../pages/ForgetPassword";
 
 const router = createBrowserRouter([
   {
@@ -20,8 +21,12 @@ const router = createBrowserRouter([
     element: <Home />,
   },
   {
-    path: "/dev",
+    path: "/signup",
     element: <RegistrationPage />,
+  },
+  {
+    path: "/dev",
+    element: <ForgetPasswordPage />,
   },
 ]);
 
