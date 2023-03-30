@@ -20,7 +20,14 @@ const SignIn = () => {
     setIsLoggedIn(true);
     navigate("/home");
   };
-  const handleFailedLogin = () => {};
+  const handleFailedLogin = (data) => {
+    data.error && console.log(data.error);
+    data.non_field_errors && console.log(data.non_field_errors);
+  };
+  const handleForgetPassword = (e) => {
+    e.preventDefault();
+    navigate("/forgetpassword");
+  };
 
   const handleSignIn = () => {
     doRequest(
@@ -49,7 +56,7 @@ const SignIn = () => {
           placeholder={"Password"}
           type={"password"}
         />
-        <a>Forget Your Password ?</a>
+        <a onClick={handleForgetPassword}>Forget Your Password ?</a>
         <SignInButton onClick={handleSignIn}>Sign In</SignInButton>
       </ContentContainer>
     </SignInContainer>

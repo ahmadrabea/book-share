@@ -5,11 +5,16 @@ import UserAccountDropDown from "./UserAccountDropDown";
 import { useState } from "react";
 import { useRecoilState } from "recoil";
 import Atoms from "../../Atoms/Atoms";
+import { useNavigate } from "react-router-dom";
 
 const Header = () => {
+  const navigate = useNavigate();
   const [isUserAccountDropDownDisplayed, setIsUserAccountDropDownDisplayed] =
     useState(false);
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(Atoms.loggedInState);
+  const handleNotification = () => {
+    navigate("/notifications");
+  };
   return (
     <Nav>
       <Container>
@@ -28,7 +33,7 @@ const Header = () => {
           <Buttons>
             {isLoggedIn ? (
               <>
-                <Notification>
+                <Notification onClick={handleNotification}>
                   <FontAwesomeIcon icon={faBell} />
                 </Notification>
                 <UserAccount

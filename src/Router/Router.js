@@ -10,6 +10,8 @@ import Home from "../pages/Home";
 import SignInPage from "../pages/SignIn";
 import RegistrationPage from "../pages/Registration";
 import ForgetPasswordPage from "../pages/ForgetPassword";
+import ResetPasswordPage from "../pages/ResetPasswordPage";
+import NotificationPage from "../pages/Notification";
 
 const router = createBrowserRouter([
   {
@@ -25,8 +27,20 @@ const router = createBrowserRouter([
     element: <RegistrationPage />,
   },
   {
-    path: "/dev",
+    path: "/forgetpassword",
     element: <ForgetPasswordPage />,
+  },
+  {
+    path: "/resetpassword",
+    element: <ResetPasswordPage />,
+  },
+  {
+    path: "/notifications",
+    element: <NotificationPage />,
+  },
+  {
+    path: "/dev",
+    element: <NotificationPage />,
   },
 ]);
 

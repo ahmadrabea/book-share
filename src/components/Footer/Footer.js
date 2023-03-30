@@ -38,8 +38,8 @@ const Container = styled.div`
 `;
 
 const FirstRow = styled.div`
-  position: fixed;
-  bottom: 50px;
+  position: relative;
+  top: 100vh;
   left: 0;
   right: 0;
   height: 90px;
@@ -54,8 +54,8 @@ const FirstRow = styled.div`
   }
 `;
 const SecondRow = styled.div`
-  position: fixed;
-  bottom: 0;
+  position: relative;
+  top: 100vh;
   left: 0;
   right: 0;
   height: 60px;
