@@ -12,6 +12,7 @@ import RegistrationPage from "../pages/Registration";
 import ForgetPasswordPage from "../pages/ForgetPassword";
 import ResetPasswordPage from "../pages/ResetPasswordPage";
 import NotificationPage from "../pages/Notification";
+import ProfilePage from "../pages/ProfilePage";
 
 const router = createBrowserRouter([
   {
@@ -39,8 +40,12 @@ const router = createBrowserRouter([
     element: <NotificationPage />,
   },
   {
+    path: "/profile",
+    element: <ProfilePage />,
+  },
+  {
     path: "/dev",
-    element: <NotificationPage />,
+    element: <ProfilePage />,
   },
 ]);
 

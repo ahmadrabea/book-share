@@ -7,23 +7,21 @@ import SignIn from "../components/SignIn/SignIn";
 import { useRecoilState } from "recoil";
 import Atoms from "../Atoms/Atoms";
 import Message from "../components/Message/Message";
+import Profile from "../components/Profile/Profile";
+import ChangePassword from "../components/Profile/ChangePassword";
 
-const SignInPage = () => {
-  const [successfulRegMessage, setSuccessfulRegMessage] = useRecoilState(
-    Atoms.successfulRegMessage
-  );
-  setTimeout(() => {
-    setSuccessfulRegMessage("");
-  }, 2000);
+const ProfilePage = () => {
   return (
     <>
       <Header></Header>
       <Container>
         <Wrapper>
-          {successfulRegMessage && (
-            <Message type={true} text={successfulRegMessage} />
-          )}
-          <SignIn />
+          <Column className="start">
+            <H2>Your Profile</H2>
+            <Profile />
+            <H2>Change Password</H2>
+            <ChangePassword />
+          </Column>
         </Wrapper>
       </Container>
 
@@ -32,7 +30,7 @@ const SignInPage = () => {
   );
 };
 
-export default SignInPage;
+export default ProfilePage;
 
 const Container = styled.div`
   display: flex;

@@ -17,20 +17,50 @@ const ForgetPassword = () => {
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(Atoms.loggedInState);
   const [token, setToken] = useRecoilState(Atoms.tokenState);
   const [error, setError] = useState(false);
+  const [message, setMessage] = useState("");
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  const handleSuccessfulLogin = (data) => {
-    setToken(data.token);
-    setIsLoggedIn(true);
-    navigate("/home");
-  };
   const handleBack = () => {
     navigate("/");
   };
+  const handleFailedSubmit = (data) => {
+    setMessage({
+      type: false,
+      content: data.email,
+    });
+  };
+  const handleSuccessSubmit = (data) => {
+    setMessage({
+      type: true,
+      content: data.detail,
+    });
+  };
 
   const handleSendEmail = () => {
+    setMessage("");
     if (emailRegex.test(emailRef.current.value)) {
       setError(false);
+      setMessage(false);
+      fetch("http://127.0.0.1:8000/account/password-reset/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: emailRef.current.value,
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.email) {
+            handleFailedSubmit(data);
+          } else {
+            handleSuccessSubmit(data);
+          }
+        })
+        .catch(() => {
+          setError("something went wrong");
+        });
     } else {
       setError(true);
     }
@@ -43,6 +73,7 @@ const ForgetPassword = () => {
           text={"invalid Email , please enter valid email"}
         />
       )}
+      {message && <Message type={message.type} text={message.content} />}
       <Fly1 className="fly1" />
       <Fly2 className="fly2" />
 

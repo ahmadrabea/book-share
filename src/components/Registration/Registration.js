@@ -8,6 +8,7 @@ import doRequest from "../../Service/doRequest";
 import { Column, H2, Row } from "../../Utils/Utils";
 import { ReactComponent as Fly1 } from "../../assets/icons/fly1.svg";
 import { ReactComponent as Fly2 } from "../../assets/icons/fly2.svg";
+import Message from "../Message/Message";
 
 const Registration = () => {
   const firstName = useRef();
@@ -20,32 +21,60 @@ const Registration = () => {
 
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(Atoms.loggedInState);
+  const [successfulRegMessage, setSuccessfulRegMessage] = useRecoilState(
+    Atoms.successfulRegMessage
+  );
   const [token, setToken] = useRecoilState(Atoms.tokenState);
   const [error, setError] = useState(false);
 
-  const handleSuccessfulLogin = (data) => {
-    setToken(data.token);
-    setIsLoggedIn(true);
-    navigate("/home");
+  const handleSuccessfulReg = (data) => {
+    setSuccessfulRegMessage(data.success);
+    navigate("/");
   };
-  const handleFailedLogin = () => {};
+  const handleFailedReg = (data) => {
+    if (data.email) {
+      setError(data.email);
+    }
+    if (data.first_name) {
+      setError(data.first_name);
+    }
+    if (data.last_name) {
+      setError(data.last_name);
+    }
+    if (data.error) {
+      setError(data.error);
+    }
+  };
 
-  const handleSignIn = () => {
-    // doRequest(
-    //   "http://127.0.0.1:8000/account/login/",
-    //   "POST",
-    //   {
-    //     username: emailRef.current.value,
-    //     password: passwordRef.current.value,
-    //   },
-    //   (data) => {
-    //     handleSuccessfulLogin(data);
-    //   },
-    //   handleFailedLogin
-    // );
+  const handleReg = () => {
+    setError("");
+    fetch("http://127.0.0.1:8000/account/register/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: emailRef.current.value,
+        first_name: firstName.current.value,
+        last_name: lastName.current.value,
+        address: address.current.value,
+        phone_number: phoneNumber.current.value,
+        password: password.current.value,
+        confirm_password: confirmPassword.current.value,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          handleSuccessfulReg(data);
+        } else {
+          handleFailedReg(data);
+        }
+      });
   };
   return (
     <RegContainer>
+      {error && <Message type={false} text={error} />}
       <Fly1 className="fly1" />
       <Fly2 className="fly2" />
 
@@ -59,15 +88,20 @@ const Registration = () => {
           <Column className="gap40">
             <InputField ref={lastName} placeholder={"Last Name"} />
             <InputField ref={phoneNumber} placeholder={"Phone Number"} />
-            <InputField ref={password} placeholder={"Password"} />
             <InputField
+              ref={password}
+              placeholder={"Password"}
+              type="password"
+            />
+            <InputField
+              type="password"
               ref={confirmPassword}
               placeholder={"Confirm Password"}
             />
           </Column>
         </Row>
         <Row>
-          <SignUpButton onClick={handleSignIn}>Sign Up</SignUpButton>
+          <SignInButton onClick={handleReg}>Sign Up</SignInButton>
         </Row>
       </ContentContainer>
     </RegContainer>
@@ -147,7 +181,7 @@ const InputField = styled.input`
     height: 155px;
   }
 `;
-const SignUpButton = styled.button`
+const SignInButton = styled.button`
   width: 400px;
   height: 45px;
   padding: 10px;

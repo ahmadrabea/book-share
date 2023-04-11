@@ -54,12 +54,16 @@ const Header = () => {
                 </AddBook>{" "}
               </>
             ) : (
-              <AddBook>
+              <SignUpButton
+                onClick={() => {
+                  navigate("/signup");
+                }}
+              >
                 <div>
                   <img src="/images/signin.svg" />
                 </div>
                 <span>Sign Up</span>
-              </AddBook>
+              </SignUpButton>
             )}
           </Buttons>
         </RightBlock>
@@ -159,6 +163,24 @@ const UserAccount = styled.div`
   }
 `;
 const AddBook = styled.button`
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 50px;
+  padding: 0px 20px;
+  border-radius: 15px;
+  color: white;
+  background-color: #6c5dd4;
+  box-shadow: 0px 1px 10px #6c5dd480;
+  border: none;
+  font-size: 16px;
+  font-weight: 500;
+  div {
+    display: flex;
+  }
+`;
+const SignUpButton = styled.button`
   cursor: pointer;
   display: flex;
   align-items: center;

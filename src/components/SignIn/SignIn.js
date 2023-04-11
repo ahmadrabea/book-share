@@ -4,7 +4,7 @@ import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import colors from "../../assets/colors";
 import Atoms from "../../Atoms/Atoms";
-import doRequest from "../../Service/doRequest";
+import Message from "../../components/Message/Message";
 import { H2 } from "../../Utils/Utils";
 
 const SignIn = () => {
@@ -13,16 +13,20 @@ const SignIn = () => {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(Atoms.loggedInState);
   const [token, setToken] = useRecoilState(Atoms.tokenState);
-  const [error, setError] = useState(false);
+  const [userInfo, setUserInfo] = useRecoilState(Atoms.userInfo);
+  const [error, setError] = useState("");
 
   const handleSuccessfulLogin = (data) => {
     setToken(data.token);
+    setUserInfo(data);
     setIsLoggedIn(true);
     navigate("/home");
+    setError("");
   };
   const handleFailedLogin = (data) => {
-    data.error && console.log(data.error);
-    data.non_field_errors && console.log(data.non_field_errors);
+    console.log(data);
+    data.error && setError(data.error);
+    data.non_field_errors && setError(data.non_field_errors[0]);
   };
   const handleForgetPassword = (e) => {
     e.preventDefault();
@@ -30,21 +34,42 @@ const SignIn = () => {
   };
 
   const handleSignIn = () => {
-    doRequest(
-      "http://127.0.0.1:8000/account/login/",
-      "POST",
-      {
+    setError("");
+    fetch("http://127.0.0.1:8000/account/login/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
         username: emailRef.current.value,
         password: passwordRef.current.value,
-      },
-      (data) => {
-        handleSuccessfulLogin(data);
-      },
-      handleFailedLogin
-    );
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.token) {
+          handleSuccessfulLogin(data);
+        } else {
+          handleFailedLogin(data);
+        }
+      });
+
+    // doRequest(
+    //   "http://127.0.0.1:8000/account/login/",
+    //   "POST",
+    //   {
+    //     username: emailRef.current.value,
+    //     password: passwordRef.current.value,
+    //   },
+    //   (data) => {
+    //     handleSuccessfulLogin(data);
+    //   },
+    //   handleFailedLogin
+    // );
   };
   return (
     <SignInContainer>
+      {error && <Message type={false} text={error} />}
       <ContentContainer>
         <H2>
           Give Your <br />

@@ -8,14 +8,37 @@ import Atoms from "../../Atoms/Atoms";
 const UserAccountDropDown = () => {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(Atoms.loggedInState);
+  const [token, setToken] = useRecoilState(Atoms.tokenState);
+  const navigateToProfile = () => {
+    navigate("/profile");
+  };
   const handleSignOut = () => {
+    fetch("http://127.0.0.1:8000/account/logout/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `token ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+      })
+      .catch(() => {
+        console.log("error");
+        setToken("");
+        setIsLoggedIn(false);
+        navigate("/");
+      });
+
+    setToken("");
     setIsLoggedIn(false);
     navigate("/");
   };
   return (
     <Ul>
       <Li>WishList</Li>
-      <Li>Your Profile</Li>
+      <Li onClick={navigateToProfile}>Your Profile</Li>
       <Li onClick={handleSignOut}>Sign Out</Li>
     </Ul>
   );

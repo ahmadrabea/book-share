@@ -9,6 +9,14 @@ const Atoms = {
     key: "token",
     default: "",
   }),
+  userInfo: atom({
+    key: "userInfo",
+    default: "",
+  }),
+  successfulRegMessage: atom({
+    key: "successfulRegMessage",
+    default: "",
+  }),
 };
 
 export default Atoms;

@@ -11,6 +11,9 @@ export const Row = styled.div`
   &.alignedStart {
     align-items: flex-start;
   }
+  &.end {
+    justify-content: flex-end;
+  }
 `;
 export const Column = styled.div`
   display: flex;
