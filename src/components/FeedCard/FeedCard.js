@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import colors from "../../assets/colors";
 import { ReactComponent as Heart } from "../../assets/icons/heart.svg";
+import { ReactComponent as Star } from "../../assets/icons/star.svg";
 import { Row, Column } from "../../Utils/Utils";
 
 const FeedCard = () => {
@@ -17,7 +18,9 @@ const FeedCard = () => {
             <span className="category">Drama,History</span>
           </Column>
           <Row>
-            <Column className="star"></Column>
+            <Column className="star">
+              <Star />
+            </Column>
             <Column className="start">
               <span className="rate">
                 <span className="user-rate">9.0</span>/10
@@ -131,6 +134,10 @@ const RightBlock = styled.div`
   .number-of-ratings {
     font-size: 14px;
     color: ${colors.lightGray};
+  }
+  .star {
+    padding-bottom: 10px;
+    padding-right: 7px;
   }
 `;
 

@@ -13,6 +13,7 @@ import ForgetPasswordPage from "../pages/ForgetPassword";
 import ResetPasswordPage from "../pages/ResetPasswordPage";
 import NotificationPage from "../pages/Notification";
 import ProfilePage from "../pages/ProfilePage";
+import LibraryPage from "../pages/LibraryPage";
 
 const router = createBrowserRouter([
   {
@@ -44,8 +45,8 @@ const router = createBrowserRouter([
     element: <ProfilePage />,
   },
   {
-    path: "/dev",
-    element: <ProfilePage />,
+    path: "/library",
+    element: <LibraryPage />,
   },
 ]);
 

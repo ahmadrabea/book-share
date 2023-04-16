@@ -10,6 +10,7 @@ const UserAccountDropDown = () => {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(Atoms.loggedInState);
   const [token, setToken] = useRecoilState(Atoms.tokenState);
+  
   const navigateToProfile = () => {
     navigate("/profile");
   };
