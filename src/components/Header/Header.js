@@ -6,12 +6,24 @@ import { useState } from "react";
 import { useRecoilState } from "recoil";
 import Atoms from "../../Atoms/Atoms";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { getCookie } from "../../Utils/Utils";
 
 const Header = () => {
+  const [userInfo, setUserInfo] = useState(
+    JSON.parse(localStorage.getItem("userInfo"))
+  );
   const navigate = useNavigate();
   const [isUserAccountDropDownDisplayed, setIsUserAccountDropDownDisplayed] =
     useState(false);
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(Atoms.loggedInState);
+  useEffect(() => {
+    if (getCookie()) {
+      setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
+    }
+  }, []);
   const handleNotification = () => {
     navigate("/notifications");
   };
@@ -43,7 +55,7 @@ const Header = () => {
                     );
                   }}
                 >
-                  <img src="/images/userAccount.jpg"></img>
+                  <img src={userInfo.user_image_url}></img>
                   {isUserAccountDropDownDisplayed && <UserAccountDropDown />}
                 </UserAccount>
                 <AddBook>
@@ -160,6 +172,7 @@ const UserAccount = styled.div`
   img {
     border-radius: 15px;
     width: 100%;
+    aspect-ratio: 1;
   }
 `;
 const AddBook = styled.button`

@@ -4,6 +4,7 @@ import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import colors from "../../assets/colors";
 import Atoms from "../../Atoms/Atoms";
+import { deleteCookie } from "../../Utils/Utils";
 
 const UserAccountDropDown = () => {
   const navigate = useNavigate();
@@ -23,8 +24,13 @@ const UserAccountDropDown = () => {
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
+        deleteCookie();
+        setIsLoggedIn(false);
+        setToken("");
+        navigate("/");
       })
       .catch(() => {
+        deleteCookie();
         console.log("error");
         setToken("");
         setIsLoggedIn(false);

@@ -5,7 +5,7 @@ import styled from "styled-components";
 import colors from "../../assets/colors";
 import Atoms from "../../Atoms/Atoms";
 import Message from "../../components/Message/Message";
-import { H2 } from "../../Utils/Utils";
+import { H2, setCookie } from "../../Utils/Utils";
 
 const SignIn = () => {
   const emailRef = useRef();
@@ -18,7 +18,10 @@ const SignIn = () => {
 
   const handleSuccessfulLogin = (data) => {
     setToken(data.token);
+    setCookie(data.token);
     setUserInfo(data);
+    localStorage.setItem("userInfo", JSON.stringify(data));
+    localStorage.setItem("userId", JSON.stringify(data.user_id));
     setIsLoggedIn(true);
     navigate("/home");
     setError("");

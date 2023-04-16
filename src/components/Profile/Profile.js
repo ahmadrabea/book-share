@@ -4,10 +4,11 @@ import { ReactComponent as DeleteIcon } from "../../assets/icons/delete.svg";
 import { ReactComponent as PenIcon } from "../../assets/icons/pen.svg";
 
 import colors from "../../assets/colors";
-import { Column, Row } from "../../Utils/Utils";
+import { Column, getCookie, Row } from "../../Utils/Utils";
 import { useRecoilState } from "recoil";
 import Atoms from "../../Atoms/Atoms";
 import Message from "../Message/Message";
+import { useEffect } from "react";
 
 export default function Profile() {
   const firstName = useRef();
@@ -15,10 +16,28 @@ export default function Profile() {
   const about = useRef();
   const lastName = useRef();
   const phoneNumber = useRef();
+  const imageInputRef = useRef();
   const address = useRef();
-  const [token, setToken] = useRecoilState(Atoms.tokenState);
-  const [userInfo, setUserInfo] = useRecoilState(Atoms.userInfo);
+  const [token, setToken] = useState(getCookie());
+  const [emptyFile, setEmptyFile] = useState();
+  const [userInfo, setUserInfo] = useState(
+    JSON.parse(localStorage.getItem("userInfo"))
+  );
+  const [userId, setUserId] = useState(
+    JSON.parse(localStorage.getItem("userId"))
+  );
   const [message, setMessage] = useState("");
+  const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
+
+  const handleImageChange = () => {
+    const file = imageInputRef.current.files[0];
+    const imageUrl = URL.createObjectURL(file);
+    setImagePreviewUrl(imageUrl);
+  };
+  const handleImageDelete = () => {
+    setImagePreviewUrl("/images/user.png");
+    setEmptyFile(new File([], "/images/user.png", { type: "image/jpeg" }));
+  };
 
   const handleSuccessfulSave = () => {
     setMessage({
@@ -39,25 +58,39 @@ export default function Profile() {
 
   const handleUpdateProfile = () => {
     console.log(userInfo);
-    fetch(`http://127.0.0.1:8000/account/profile/${userInfo.user_id}/`, {
+    const formData = new FormData();
+    formData.append("first_name", firstName.current.value);
+    formData.append("last_name", lastName.current.value);
+    formData.append("phone_number", phoneNumber.current.value);
+    formData.append("address", address.current.value);
+    formData.append("about", about.current.value);
+    formData.append(
+      "user_image_url",
+      imageInputRef.current.files[0] || emptyFile
+    );
+
+    fetch(`http://127.0.0.1:8000/account/profile/${userId}/`, {
       method: "PUT",
       headers: {
-        "Content-Type": "application/json",
         Authorization: `token ${token}`,
       },
-      body: JSON.stringify({
-        first_name: firstName.current.value,
-        last_name: lastName.current.value,
-        phone_number: phoneNumber.current.value,
-        address: address.current.value,
-        about: about.current.value,
-      }),
+      body: formData,
     })
       .then((res) => {
         if (res.ok) {
+          console.log(res);
           handleSuccessfulSave();
+          return res.json();
         } else {
           handleBadSave();
+        }
+      })
+      .then((data) => {
+        console.log(data);
+        if (data) {
+          console.log(data);
+          localStorage.setItem("userInfo", JSON.stringify(data));
+          setUserInfo(localStorage.getItem("userInfo"));
         }
       })
       .catch((error) => {
@@ -76,12 +109,18 @@ export default function Profile() {
           <Row className="gap25">
             <Column className="gap25">
               <ProfilePicture>
-                <img src="/images/userAccount.jpg"></img>
+                <img src={imagePreviewUrl || userInfo.user_image_url}></img>
               </ProfilePicture>
-              <EditButton>
+              <EditButton onClick={() => imageInputRef.current.click()}>
                 <PenIcon />
+                <input
+                  hidden
+                  type={"file"}
+                  ref={imageInputRef}
+                  onChange={handleImageChange}
+                />
               </EditButton>
-              <DeleteButton>
+              <DeleteButton onClick={handleImageDelete}>
                 <DeleteIcon />
               </DeleteButton>
             </Column>
@@ -129,6 +168,7 @@ const ProfilePicture = styled.div`
   img {
     border-radius: 15px;
     width: 100%;
+    aspect-ratio: 1;
   }
 `;
 
