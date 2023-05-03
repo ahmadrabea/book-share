@@ -4,18 +4,35 @@ import colors from "../../assets/colors";
 import { ReactComponent as Heart } from "../../assets/icons/heart.svg";
 import { ReactComponent as Star } from "../../assets/icons/star.svg";
 import { Row, Column } from "../../Utils/Utils";
+import { useNavigate } from "react-router-dom";
 
-const FeedCard = () => {
+const FeedCard = (props) => {
+  const navigate = useNavigate();
+  console.log("props");
+  console.log(props);
+  const goToUser = (id) => {
+    navigate(`/library?userid=${id}`);
+  };
   return (
     <FeedCardContainer>
       <LeftBlock>
-        <img src="https://placehold.co/210x300" />
+        <img src={props.bookImageUrl || "https://placehold.co/210x300"} />
       </LeftBlock>
       <RightBlock>
         <Row>
           <Column className="start">
-            <h1 className="book-title">Book Title</h1>
-            <span className="category">Drama,History</span>
+            <h1 className="book-title">{props.bookName}</h1>
+            <Row>
+              {props.category.map((item, idx) => {
+                let lastIdx = props.category.length - 1;
+                return (
+                  <span className="category">
+                    {item}
+                    {idx === lastIdx ? "" : ", "}
+                  </span>
+                );
+              })}
+            </Row>
           </Column>
           <Row>
             <Column className="star">
@@ -23,40 +40,40 @@ const FeedCard = () => {
             </Column>
             <Column className="start">
               <span className="rate">
-                <span className="user-rate">9.0</span>/10
+                <span className="user-rate">{props.avgRating}</span>/10
               </span>
-              <span className="number-of-ratings">10K</span>
+              <span className="number-of-ratings">{props.numberRating}</span>
             </Column>
           </Row>
         </Row>
         <Row>
-          <p className="description">
-            A Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum has been the industry's standard dummy text
-            ever since the 1500s, when an unknown printer took a galley of type
-            and scrambled it to make a type specimen book. It has survived not
-          </p>
+          <p className="description">{props.description}</p>
         </Row>
         <Row>
           <Column>
             <Row>
               <Column className="start mr">
                 <span className="title">Author</span>
-                <span className="value">Ahmad Abu Rabea</span>
+                <span className="value">{props.author}</span>
               </Column>
               <Column className="start mr">
                 <span className="title">Publisher</span>
-                <span className="value">University of Jordan</span>
+                <span className="value">{props.publisher}</span>
               </Column>
               <Column className="start mr">
                 <span className="title">Year</span>
-                <span className="value">2019</span>
+                <span className="value">{props.year}</span>
               </Column>
             </Row>
           </Column>
           <Row className="gap20">
-            <UserImage src={"/images/face.jpeg"} />
-            <BorrowRequest>Borrow Request</BorrowRequest>
+            <UserImage
+              onClick={() => goToUser(props.bookOwnerId)}
+              src={props.userImageUrl}
+            />
+            <BorrowRequest className={props.status ? "borrowed" : ""}>
+              {props.status ? "Already borrowed" : "Borrow Request"}
+            </BorrowRequest>
             <Save>
               <Heart />
             </Save>
@@ -156,7 +173,13 @@ const BorrowRequest = styled.button`
   border-radius: 20px;
   color: white;
   border: none;
+  font-weight: 600;
   cursor: pointer;
+  &.borrowed {
+    color: ${colors.secondary};
+    background-color: ${colors.primary};
+    cursor: not-allowed;
+  }
 `;
 
 const Save = styled.button`

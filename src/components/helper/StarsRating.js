@@ -16,7 +16,7 @@ function RatingStars({ initialRating }) {
     );
   }
 
-  return <div>{stars}</div>;
+  return <div className="theStars">{stars}</div>;
 }
 
 export default RatingStars;

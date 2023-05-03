@@ -1,11 +1,31 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import colors from "../../assets/colors";
 import { ReactComponent as Arrow } from "../../assets/icons/arrow.svg";
-import { H2, Row } from "../../Utils/Utils";
+import { H2, Row, getCookie } from "../../Utils/Utils";
 
-const CategoryFilter = () => {
+const CategoryFilter = (props) => {
   const [isCategoryOpen, setIsCategoryOpen] = useState(true);
+  const [token, setToken] = useState(getCookie());
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    console.log(token);
+    fetch("http://127.0.0.1:8000/categories/", {
+      method: "GET",
+      headers: {
+        Authorization: `token ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setCategories(data);
+        console.log(categories);
+      })
+      .catch((error) => {
+        console.log("someThing went wrong :", error);
+      });
+  }, []);
   const toggleAccordion = () => {
     setIsCategoryOpen(!isCategoryOpen);
   };
@@ -22,38 +42,16 @@ const CategoryFilter = () => {
       </Row>
       <Row>
         <FiltersContainer className={isCategoryOpen ? "" : "closed"}>
-          <Category>Drama</Category>
-          <Category>History</Category>
-          <Category>Tech</Category>
-          <Category>economy</Category>
-          <Category>economy</Category>
-          <Category>Drama</Category>
-          <Category>Drama</Category>
-          <Category>History</Category>
-          <Category>economy</Category>
-          <Category>Drama</Category>
-          <Category>Tech</Category>
-          <Category>economy</Category>
-          <Category>Drama</Category>
-          <Category>History</Category>
-          <Category>Tech</Category>
-          <Category>economy</Category>
-          <Category>economy</Category>
-          <Category>Drama</Category>
-          <Category>Drama</Category>
-          <Category>economy</Category>
-          <Category>Drama</Category>
-          <Category>History</Category>
-          <Category>Tech</Category>
-          <Category>economy</Category>
-          <Category>Drama</Category>
-          <Category>History</Category>
-          <Category>Tech</Category>
-          <Category>economy</Category>
-          <Category>Drama</Category>
-          <Category>History</Category>
-          <Category>Tech</Category>
-          <Category>economy</Category>
+          {categories.map((item) => {
+            return (
+              <Category
+                onClick={() => props.applyFilter(item.id)}
+                key={item.id}
+              >
+                {item.category}
+              </Category>
+            );
+          })}
         </FiltersContainer>
       </Row>
     </Container>

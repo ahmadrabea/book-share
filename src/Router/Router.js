@@ -14,6 +14,9 @@ import ResetPasswordPage from "../pages/ResetPasswordPage";
 import NotificationPage from "../pages/Notification";
 import ProfilePage from "../pages/ProfilePage";
 import LibraryPage from "../pages/LibraryPage";
+import YourLibrary from "../pages/YourLibrary";
+import AddBookPage from "../pages/AddBookPage";
+import AddBookForm from "../pages/AddBookForm";
 
 const router = createBrowserRouter([
   {
@@ -47,6 +50,18 @@ const router = createBrowserRouter([
   {
     path: "/library",
     element: <LibraryPage />,
+  },
+  {
+    path: "/myLibrary",
+    element: <YourLibrary />,
+  },
+  {
+    path: "/addBook",
+    element: <AddBookPage />,
+  },
+  {
+    path: "/addBookForm",
+    element: <AddBookForm />,
   },
 ]);
 

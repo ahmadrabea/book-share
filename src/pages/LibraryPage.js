@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Header from "../components/Header/Header";
 import Slider from "../components/Carousel/Carousel";
 import FeedCard from "../components/FeedCard/FeedCard";
-import { Column, H2, Row } from "../Utils/Utils";
+import { Column, H2, Row, getCookie } from "../Utils/Utils";
 import SearchInput from "../components/SearchInput/SearchInput";
 import Select from "../components/Select/Select";
 import StatusFilter from "../components/StatusFilter/StatusFilter";
@@ -18,13 +18,93 @@ import { ReactComponent as CallIcon } from "../assets/icons/call.svg";
 import RatingStars from "../components/helper/StarsRating";
 
 const LibraryPage = () => {
+  const [token, setToken] = useState(getCookie());
+  const [userData, setUserData] = useState();
+  const [userRating, setUserRating] = useState();
+  const [cards, setCards] = useState([]);
+  useEffect(() => {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const userId = urlParams.get("userid");
+    console.log("userID :", userId);
+    fetch(`http://127.0.0.1:8000/account/${userId}/`, {
+      method: "GET",
+      headers: {
+        Authorization: `token ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setUserData(data);
+      })
+      .catch((error) => {
+        console.log("someThing went wrong :", error);
+      });
+  }, []);
+
+  useEffect(() => {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const userId = urlParams.get("userid");
+    fetch(`http://127.0.0.1:8000/library/${userId}/get-rating/`, {
+      method: "GET",
+      headers: {
+        Authorization: `token ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setUserRating(data);
+      })
+      .catch((error) => {
+        console.log("someThing went wrong :", error);
+      });
+  }, []);
+
+  useEffect(() => {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const userId = urlParams.get("userid");
+    fetch(`http://127.0.0.1:8000/library/${userId}/`, {
+      method: "GET",
+      headers: {
+        Authorization: `token ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setCards(data);
+      })
+      .catch((error) => {
+        console.log("someThing went wrong :", error);
+      });
+  }, []);
+
+  const applyFilterHnadler = (categoryId) => {
+    fetch(
+      `http://127.0.0.1:8000/list/?search=dfgd&book_id__categories=${categoryId}&status=1`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `token ${token}`,
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        setCards(data);
+      })
+      .catch((error) => {
+        console.log("someThing went wrong :", error);
+      });
+  };
   const dummyArray = [0, 0, 0, 0];
   return (
     <>
       <Header></Header>
       <Cover>
-        <img src="/images/face.jpeg" />
-        <H2 className="name">Ahmad Abu Rabee</H2>
+        <img src={userData?.user_image_url} />
+        <H2 className="name">{userData?.full_name}</H2>
         <Row className="buttons">
           <MessageButton>
             <MailIcon />
@@ -44,9 +124,12 @@ const LibraryPage = () => {
                 </Column>
                 <Column className="start">
                   <span className="rate">
-                    <span className="user-rate">9.0</span>/10
+                    <span className="user-rate">{userData?.avg_rating}</span>/10
                   </span>
-                  <span className="number-of-ratings">10K</span>
+
+                  <span className="number-of-ratings">
+                    {userData?.number_rating}
+                  </span>
                 </Column>
               </Row>
               <Row>
@@ -57,11 +140,8 @@ const LibraryPage = () => {
             <AboutBox>
               <Column className="start">
                 <H2>About</H2>
-                <p>
-                  Lorem Lorem Lorem Lorem Lorem Lorem Lorem Lorem Lorem Lorem
-                  Lorem Lorem Lorem Lorem Lorem Lorem Lorem Lorem Lorem Lorem
-                  Lorem Lorem Lorem Lorem Lorem Lorem Lorem Lorem Lorem Lorem
-                </p>
+
+                <p>{userData?.about}</p>
                 <Row>
                   <Location />
                   <span>Jordan / Amman</span>
@@ -91,14 +171,31 @@ const LibraryPage = () => {
           <Row className="alignedStart" style={{ marginTop: "20px" }}>
             <Column>
               <StatusFilter />
-              <CategoryFilter />
+              <CategoryFilter applyFilter={applyFilterHnadler} />
             </Column>
             <Column>
-              {dummyArray.map((item, index) => {
-                return <FeedCard key={index} />;
+              {cards.map((item) => {
+                return (
+                  <FeedCard
+                    key={item.id}
+                    category={item.book_id.categories_name}
+                    avgRating={item.book_id.avg_rating}
+                    numberRating={item.book_id.number_rating}
+                    bookName={item.book_id.book_name}
+                    publisher={item.book_id.publisher}
+                    author={item.book_id.author}
+                    description={item.book_id.description}
+                    year={item.book_id.year}
+                    bookOwnerId={item.book_owner_id.id}
+                    fullName={item.book_owner_id.full_name}
+                    userImageUrl={item.book_owner_id.user_image_url}
+                    bookImageUrl={item.bookImageUrl}
+                    status={item.status}
+                  />
+                );
               })}
-              <h3>See more</h3>
-              <Arrow />
+              {/* <h3>See more</h3>
+              <Arrow /> */}
             </Column>
           </Row>
         </Wrapper>
