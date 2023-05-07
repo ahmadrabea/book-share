@@ -3,11 +3,20 @@ import styled from "styled-components";
 import colors from "../../assets/colors";
 import { ReactComponent as Arrow } from "../../assets/icons/arrow.svg";
 import { H2, Row, getCookie } from "../../Utils/Utils";
+import { useRecoilState } from "recoil";
+import Atoms from "../../Atoms/Atoms";
 
 const CategoryFilter = (props) => {
-  const [isCategoryOpen, setIsCategoryOpen] = useState(true);
+  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [token, setToken] = useState(getCookie());
   const [categories, setCategories] = useState([]);
+  const [selectedCategoryId, setSelectedCategoryId] = useRecoilState(
+    Atoms.categoryId
+  );
+
+  const chooseFilter = (idx) => {
+    setSelectedCategoryId((prev) => (prev === idx ? "" : idx));
+  };
 
   useEffect(() => {
     console.log(token);
@@ -45,7 +54,8 @@ const CategoryFilter = (props) => {
           {categories.map((item) => {
             return (
               <Category
-                onClick={() => props.applyFilter(item.id)}
+                className={selectedCategoryId === item.id ? "selected" : ""}
+                onClick={() => chooseFilter(item.id)}
                 key={item.id}
               >
                 {item.category}
@@ -82,7 +92,7 @@ const Container = styled.div`
 
 const FiltersContainer = styled.div`
   padding-left: 10px;
-  height: 265px;
+  height: 350px;
   overflow: hidden;
   transition: all 0.2s ease-in-out;
   display: flex;
@@ -119,4 +129,8 @@ const Category = styled.div`
   margin: 3px;
   cursor: pointer;
   color: ${colors.secondary};
+  &.selected {
+    background-color: ${colors.secondary};
+    color: white;
+  }
 `;

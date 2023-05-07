@@ -8,8 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 const FeedCard = (props) => {
   const navigate = useNavigate();
-  console.log("props");
-  console.log(props);
+
   const goToUser = (id) => {
     navigate(`/library?userid=${id}`);
   };
@@ -71,8 +70,8 @@ const FeedCard = (props) => {
               onClick={() => goToUser(props.bookOwnerId)}
               src={props.userImageUrl}
             />
-            <BorrowRequest className={props.status ? "borrowed" : ""}>
-              {props.status ? "Already borrowed" : "Borrow Request"}
+            <BorrowRequest className={props.status ? "" : "borrowed"}>
+              {props.status ? "Borrow Request" : "Already borrowed"}
             </BorrowRequest>
             <Save>
               <Heart />

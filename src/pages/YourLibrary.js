@@ -46,9 +46,9 @@ const YourLibrary = () => {
               <CategoryFilter />
             </Column>
             <Column>
-              {dummyArray.map((item, index) => {
+              {/* {dummyArray.map((item, index) => {
                 return <FeedCard key={index} />;
-              })}
+              })} */}
               <h3>See more</h3>
               <Arrow />
             </Column>

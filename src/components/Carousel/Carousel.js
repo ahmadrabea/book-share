@@ -2,25 +2,44 @@ import Carousel from "@itseasy21/react-elastic-carousel";
 import styled from "styled-components";
 import SliderItem from "./SliderItem";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { getCookie } from "../../Utils/Utils";
 
-const Slider = ({ title, colorClass }) => {
+const Slider = ({ title, colorClass, type }) => {
+  const [token, setToken] = useState(getCookie());
+  const [cards, setCards] = useState([]);
+
+  useEffect(() => {
+    let url =
+      type === "recommended"
+        ? "http://127.0.0.1:8000/recommended-for-you/"
+        : "http://127.0.0.1:8000/top-rated/";
+    fetch(url, {
+      method: "GET",
+      headers: {
+        Authorization: `token ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setCards(data);
+      })
+      .catch((error) => {
+        console.log("someThing went wrong :", error);
+      });
+  }, []);
   return (
     <CarouselContainer className={colorClass}>
       <Title>{title}</Title>
       <Carousel itemsToShow={3}>
-        <SliderItem></SliderItem>
-        <SliderItem></SliderItem>
-        <SliderItem></SliderItem>
-        <SliderItem></SliderItem>
-        <SliderItem></SliderItem>
-        <SliderItem></SliderItem>
-        <SliderItem></SliderItem>
-        <SliderItem></SliderItem>
-        <SliderItem></SliderItem>
-        <SliderItem></SliderItem>
-        <SliderItem></SliderItem>
-        <SliderItem></SliderItem>
+        {cards.map((item) => (
+          <SliderItem
+            title={item.book_name}
+            cover={item.image_url}
+            category={item.categories__category}
+            key={item.user_book_id}
+          />
+        ))}
       </Carousel>
     </CarouselContainer>
   );

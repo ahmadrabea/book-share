@@ -17,6 +17,18 @@ const Atoms = {
     key: "successfulRegMessage",
     default: "",
   }),
+  categoryId: atom({
+    key: "categoriesId",
+    default: "",
+  }),
+  SelectedStatus: atom({
+    key: "SelectedStatus",
+    default: null,
+  }),
+  cards: atom({
+    key: "cards",
+    default: [],
+  }),
 };
 
 export default Atoms;

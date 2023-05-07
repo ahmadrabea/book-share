@@ -10,13 +10,18 @@ import StatusFilter from "../components/StatusFilter/StatusFilter";
 import CategoryFilter from "../components/CategoryFilter/CategoryFilter";
 import { ReactComponent as Arrow } from "../assets/icons/arrow.svg";
 import Footer from "../components/Footer/Footer";
+import { useRecoilState } from "recoil";
+import Atoms from "../Atoms/Atoms";
+import FeedCardEmpty from "../components/FeedCard/FeedCardEmpty";
 
 const Home = () => {
   const [token, setToken] = useState(getCookie());
   const [cards, setCards] = useState([]);
+  const [filteredCards, setFilteredCards] = useRecoilState(Atoms.cards);
   const dummyArray = [0, 0, 0, 0];
 
   useEffect(() => {
+    console.log("scrolled");
     fetch("http://127.0.0.1:8000/list/", {
       method: "GET",
       headers: {
@@ -26,39 +31,31 @@ const Home = () => {
       .then((res) => res.json())
       .then((data) => {
         setCards(data);
-        console.log(cards);
       })
+      .then(() => window.scrollTo(0, 0))
       .catch((error) => {
         console.log("someThing went wrong :", error);
       });
   }, []);
 
-  const applyFilterHnadler = (categoryId) => {
-    fetch(
-      `http://127.0.0.1:8000/list/?search=dfgd&book_id__categories=${categoryId}&status=1`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `token ${token}`,
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        setCards(data);
-        console.log(cards);
-      })
-      .catch((error) => {
-        console.log("someThing went wrong :", error);
-      });
-  };
+  useEffect(() => {
+    setCards(filteredCards);
+  }, [filteredCards]);
+
+  // const applyFilterHandler = (categoryId) => {
+
+  // };
   return (
     <>
       <Header></Header>
       <Container>
         <SliderWrapper>
-          <Slider title={"Recomended For You"} colorClass="blue" />
-          <Slider title={"New Books"} colorClass="orange" />
+          <Slider
+            title={"Recommended For You"}
+            colorClass="blue"
+            type={"recommended"}
+          />
+          <Slider title={"Top Rated"} colorClass="orange" type={"topRated"} />
         </SliderWrapper>
 
         <Wrapper>
@@ -81,29 +78,33 @@ const Home = () => {
           <Row className="alignedStart" style={{ marginTop: "20px" }}>
             <Column>
               <StatusFilter />
-              <CategoryFilter applyFilter={applyFilterHnadler} />
+              <CategoryFilter />
             </Column>
             <Column>
-              {cards.map((item) => {
-                return (
-                  <FeedCard
-                    key={item.id}
-                    category={item.book_id.categories_name}
-                    avgRating={item.book_id.avg_rating}
-                    numberRating={item.book_id.number_rating}
-                    bookName={item.book_id.book_name}
-                    publisher={item.book_id.publisher}
-                    author={item.book_id.author}
-                    description={item.book_id.description}
-                    year={item.book_id.year}
-                    bookOwnerId={item.book_owner_id.id}
-                    fullName={item.book_owner_id.full_name}
-                    userImageUrl={item.book_owner_id.user_image_url}
-                    bookImageUrl={item.bookImageUrl}
-                    status={item.status}
-                  />
-                );
-              })}
+              {!cards.length ? (
+                <FeedCardEmpty />
+              ) : (
+                cards.map((item) => {
+                  return (
+                    <FeedCard
+                      key={item.id}
+                      category={item.book_id.categories_name}
+                      avgRating={item.book_id.avg_rating}
+                      numberRating={item.book_id.number_rating}
+                      bookName={item.book_id.book_name}
+                      publisher={item.book_id.publisher}
+                      author={item.book_id.author}
+                      description={item.book_id.description}
+                      year={item.book_id.year}
+                      bookOwnerId={item.book_owner_id.id}
+                      fullName={item.book_owner_id.full_name}
+                      userImageUrl={item.book_owner_id.user_image_url}
+                      bookImageUrl={item.book_image_url}
+                      status={item.status}
+                    />
+                  );
+                })
+              )}
               {/* <h3>See more</h3>
               <Arrow /> */}
             </Column>

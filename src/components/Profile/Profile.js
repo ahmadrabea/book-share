@@ -70,7 +70,7 @@ export default function Profile() {
     );
 
     fetch(`http://127.0.0.1:8000/account/profile/${userId}/`, {
-      method: "PUT",
+      method: "PATCH",
       headers: {
         Authorization: `token ${token}`,
       },

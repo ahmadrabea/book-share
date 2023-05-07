@@ -1,12 +1,14 @@
 import React from "react";
 import styled from "styled-components";
 
-const SliderItem = () => {
+const SliderItem = (props) => {
   return (
     <CardWrapper>
-      <Card />
-      <BookName>Booooooook Name</BookName>
-      <Tags>HISTORY,DRAMA</Tags>
+      <Card>
+        <img src={props.cover} alt="Book Cover" />
+      </Card>
+      <BookName>{props.title}</BookName>
+      <Tags>{props.category}</Tags>
     </CardWrapper>
   );
 };
@@ -19,6 +21,11 @@ const Card = styled.div`
   border-radius: 20px;
   border: 1px solid #707070;
   background-color: white;
+  overflow: hidden;
+  img {
+    height: 100%;
+    width: 100%;
+  }
 `;
 
 const BookName = styled.span`

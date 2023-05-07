@@ -65,6 +65,7 @@ const LibraryPage = () => {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const userId = urlParams.get("userid");
+    window.scrollTo(0, 0);
     fetch(`http://127.0.0.1:8000/library/${userId}/`, {
       method: "GET",
       headers: {
@@ -82,7 +83,7 @@ const LibraryPage = () => {
 
   const applyFilterHnadler = (categoryId) => {
     fetch(
-      `http://127.0.0.1:8000/list/?search=dfgd&book_id__categories=${categoryId}&status=1`,
+      `http://127.0.0.1:8000/list/?book_id__categories=${categoryId}&status=1`,
       {
         method: "GET",
         headers: {
@@ -189,7 +190,7 @@ const LibraryPage = () => {
                     bookOwnerId={item.book_owner_id.id}
                     fullName={item.book_owner_id.full_name}
                     userImageUrl={item.book_owner_id.user_image_url}
-                    bookImageUrl={item.bookImageUrl}
+                    bookImageUrl={item.book_image_url}
                     status={item.status}
                   />
                 );

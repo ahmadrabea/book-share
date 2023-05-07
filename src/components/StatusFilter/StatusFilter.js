@@ -3,11 +3,28 @@ import styled from "styled-components";
 import colors from "../../assets/colors";
 import { ReactComponent as Arrow } from "../../assets/icons/arrow.svg";
 import { H2, Row } from "../../Utils/Utils";
+import { useRecoilState } from "recoil";
+import Atoms from "../../Atoms/Atoms";
 
 const StatusFilter = () => {
-  const [isStatusOpen, setIsStatusOpen] = useState(true);
+  const [isStatusOpen, setIsStatusOpen] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useRecoilState(
+    Atoms.SelectedStatus
+  );
+
   const toggleAccordion = () => {
     setIsStatusOpen(!isStatusOpen);
+  };
+  const CheckInput = ({ value }) => {
+    const handleClick = (e) => {
+      setSelectedStatus(value === selectedStatus ? null : value);
+    };
+    return (
+      <CheckBoxInput
+        checked={value === selectedStatus}
+        onClick={(e) => handleClick(e)}
+      />
+    );
   };
   return (
     <Container>
@@ -23,11 +40,12 @@ const StatusFilter = () => {
       <Row>
         <CheckBoxContainer className={isStatusOpen ? "" : "closed"}>
           <Row className="start p7">
-            <CheckBoxInput />
+            <CheckInput value="borrowed" />
+            {/* <CheckBoxInput /> */}
             <label>Borrowed</label>
           </Row>
           <Row className="start p7">
-            <CheckBoxInput />
+            <CheckInput value="notBorrowed" />
             <label>Not Borrowed</label>
           </Row>
         </CheckBoxContainer>
@@ -70,6 +88,7 @@ const CheckBoxContainer = styled.div`
 const CheckBoxInput = styled.input.attrs({ type: "checkbox" })`
   width: 17px;
   height: 17px;
+  cursor: pointer;
 `;
 const IconContainer = styled.div`
   width: 30px;
