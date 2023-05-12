@@ -16,16 +16,23 @@ import { ReactComponent as Location } from "../assets/icons/location.svg";
 import { ReactComponent as MailIcon } from "../assets/icons/mail.svg";
 import { ReactComponent as CallIcon } from "../assets/icons/call.svg";
 import RatingStars from "../components/helper/StarsRating";
+import { useRecoilState } from "recoil";
+import Atoms from "../Atoms/Atoms";
+import FeedCardEmpty from "../components/FeedCard/FeedCardEmpty";
 
 const LibraryPage = () => {
   const [token, setToken] = useState(getCookie());
   const [userData, setUserData] = useState();
   const [userRating, setUserRating] = useState();
   const [cards, setCards] = useState([]);
+  const [userId, setUserId] = useState();
+  const [filteredCards, setFilteredCards] = useRecoilState(Atoms.cards);
+
   useEffect(() => {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const userId = urlParams.get("userid");
+    setUserId(userId);
     console.log("userID :", userId);
     fetch(`http://127.0.0.1:8000/account/${userId}/`, {
       method: "GET",
@@ -80,26 +87,32 @@ const LibraryPage = () => {
         console.log("someThing went wrong :", error);
       });
   }, []);
+  useEffect(() => {
+    setCards(filteredCards);
+  }, [filteredCards]);
 
-  const applyFilterHnadler = (categoryId) => {
-    fetch(
-      `http://127.0.0.1:8000/list/?book_id__categories=${categoryId}&status=1`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `token ${token}`,
-        },
-      }
-    )
+  const createRate = () => {
+    const rating = document.querySelectorAll(".theStars .star.filled").length;
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const userId = urlParams.get("userid");
+    fetch(`http://127.0.0.1:8000/library/${userId}/create-rating/`, {
+      method: "POST",
+      headers: {
+        Authorization: `token ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        rating: rating,
+      }),
+    })
       .then((res) => res.json())
-      .then((data) => {
-        setCards(data);
-      })
+      .then((data) => {})
       .catch((error) => {
         console.log("someThing went wrong :", error);
       });
   };
-  const dummyArray = [0, 0, 0, 0];
+
   return (
     <>
       <Header></Header>
@@ -136,7 +149,7 @@ const LibraryPage = () => {
               <Row>
                 <RatingStars initialRating={0} />
               </Row>
-              <RateButton>Rate</RateButton>
+              <RateButton onClick={createRate}>Rate</RateButton>
             </RatingBox>
             <AboutBox>
               <Column className="start">
@@ -145,7 +158,7 @@ const LibraryPage = () => {
                 <p>{userData?.about}</p>
                 <Row>
                   <Location />
-                  <span>Jordan / Amman</span>
+                  <span>{userData?.address}</span>
                 </Row>
               </Column>
             </AboutBox>
@@ -163,7 +176,7 @@ const LibraryPage = () => {
           </Row>
           <Row>
             <Column>
-              <SearchInput />
+              <SearchInput page={"library"} id={userId} />
             </Column>
             <Column>
               <Select />
@@ -172,29 +185,33 @@ const LibraryPage = () => {
           <Row className="alignedStart" style={{ marginTop: "20px" }}>
             <Column>
               <StatusFilter />
-              <CategoryFilter applyFilter={applyFilterHnadler} />
+              <CategoryFilter />
             </Column>
             <Column>
-              {cards.map((item) => {
-                return (
-                  <FeedCard
-                    key={item.id}
-                    category={item.book_id.categories_name}
-                    avgRating={item.book_id.avg_rating}
-                    numberRating={item.book_id.number_rating}
-                    bookName={item.book_id.book_name}
-                    publisher={item.book_id.publisher}
-                    author={item.book_id.author}
-                    description={item.book_id.description}
-                    year={item.book_id.year}
-                    bookOwnerId={item.book_owner_id.id}
-                    fullName={item.book_owner_id.full_name}
-                    userImageUrl={item.book_owner_id.user_image_url}
-                    bookImageUrl={item.book_image_url}
-                    status={item.status}
-                  />
-                );
-              })}
+              {!cards.length ? (
+                <FeedCardEmpty />
+              ) : (
+                cards.map((item) => {
+                  return (
+                    <FeedCard
+                      key={item.id}
+                      category={item.book_id.categories_name}
+                      avgRating={item.book_id.avg_rating}
+                      numberRating={item.book_id.number_rating}
+                      bookName={item.book_id.book_name}
+                      publisher={item.book_id.publisher}
+                      author={item.book_id.author}
+                      description={item.book_id.description}
+                      year={item.book_id.year}
+                      bookOwnerId={item.book_owner_id.id}
+                      fullName={item.book_owner_id.full_name}
+                      userImageUrl={item.book_owner_id.user_image_url}
+                      bookImageUrl={item.book_image_url}
+                      status={item.status}
+                    />
+                  );
+                })
+              )}
               {/* <h3>See more</h3>
               <Arrow /> */}
             </Column>

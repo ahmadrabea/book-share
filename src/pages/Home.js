@@ -69,7 +69,7 @@ const Home = () => {
           </Row>
           <Row>
             <Column>
-              <SearchInput />
+              <SearchInput page={"home"} />
             </Column>
             <Column>
               <Select />

@@ -13,6 +13,9 @@ const Header = () => {
   const [userInfo, setUserInfo] = useState(
     JSON.parse(localStorage.getItem("userInfo"))
   );
+  const [userId, setUserId] = useState(
+    JSON.parse(localStorage.getItem("userId"))
+  );
   const navigate = useNavigate();
   const [isUserAccountDropDownDisplayed, setIsUserAccountDropDownDisplayed] =
     useState(false);
@@ -31,13 +34,24 @@ const Header = () => {
     <Nav>
       <Container>
         <Logo>
-          <img src="/images/logo.png" alt="book share logo" />
+          <img
+            src="/images/logo.png"
+            alt="book share logo"
+            onClick={() => navigate("/home")}
+          />
         </Logo>
         <RightBlock>
           <Links>
-            <a href="#">Home</a>
+            <a href="#" onClick={() => navigate("/home")}>
+              Home
+            </a>
             {isLoggedIn ? (
-              <a href="#">Your library</a>
+              <a
+                href="#"
+                onClick={() => navigate(`/myLibrary?userId=${userId}`)}
+              >
+                Your library
+              </a>
             ) : (
               <a href="#">Discover</a>
             )}

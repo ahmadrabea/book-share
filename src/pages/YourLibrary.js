@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Header from "../components/Header/Header";
 import Slider from "../components/Carousel/Carousel";
 import FeedCard from "../components/FeedCard/FeedCard";
-import { Column, H2, Row } from "../Utils/Utils";
+import { Column, H2, Row, getCookie } from "../Utils/Utils";
 import SearchInput from "../components/SearchInput/SearchInput";
 import Select from "../components/Select/Select";
 import StatusFilter from "../components/StatusFilter/StatusFilter";
@@ -16,8 +16,39 @@ import { ReactComponent as Location } from "../assets/icons/location.svg";
 import { ReactComponent as MailIcon } from "../assets/icons/mail.svg";
 import { ReactComponent as CallIcon } from "../assets/icons/call.svg";
 import RatingStars from "../components/helper/StarsRating";
+import { useRecoilState } from "recoil";
+import Atoms from "../Atoms/Atoms";
+import FeedCardEmpty from "../components/FeedCard/FeedCardEmpty";
 
 const YourLibrary = () => {
+  const [token, setToken] = useState(getCookie());
+  const [cards, setCards] = useState([]);
+  const [filteredCards, setFilteredCards] = useRecoilState(Atoms.cards);
+  const [userId, setUserId] = useState();
+  useEffect(() => {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const userId = urlParams.get("userid");
+    setUserId(userId);
+    window.scrollTo(0, 0);
+    fetch(`http://127.0.0.1:8000/library/${userId}/`, {
+      method: "GET",
+      headers: {
+        Authorization: `token ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setCards(data);
+      })
+      .catch((error) => {
+        console.log("someThing went wrong :", error);
+      });
+  }, []);
+  useEffect(() => {
+    setCards(filteredCards);
+  }, [filteredCards]);
+
   const dummyArray = [0, 0, 0, 0];
   return (
     <>
@@ -34,7 +65,7 @@ const YourLibrary = () => {
           </Row>
           <Row>
             <Column>
-              <SearchInput />
+              <SearchInput page={"library"} id={userId} />
             </Column>
             <Column>
               <Select />
@@ -46,11 +77,32 @@ const YourLibrary = () => {
               <CategoryFilter />
             </Column>
             <Column>
-              {/* {dummyArray.map((item, index) => {
-                return <FeedCard key={index} />;
-              })} */}
-              <h3>See more</h3>
-              <Arrow />
+              {!cards.length ? (
+                <FeedCardEmpty />
+              ) : (
+                cards.map((item) => {
+                  return (
+                    <FeedCard
+                      key={item.id}
+                      category={item.book_id.categories_name}
+                      avgRating={item.book_id.avg_rating}
+                      numberRating={item.book_id.number_rating}
+                      bookName={item.book_id.book_name}
+                      publisher={item.book_id.publisher}
+                      author={item.book_id.author}
+                      description={item.book_id.description}
+                      year={item.book_id.year}
+                      bookOwnerId={item.book_owner_id.id}
+                      fullName={item.book_owner_id.full_name}
+                      userImageUrl={item.book_owner_id.user_image_url}
+                      bookImageUrl={item.book_image_url}
+                      status={item.status}
+                    />
+                  );
+                })
+              )}
+              {/* <h3>See more</h3>
+              <Arrow /> */}
             </Column>
           </Row>
         </Wrapper>

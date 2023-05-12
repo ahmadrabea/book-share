@@ -16,8 +16,11 @@ const SearchInput = (props) => {
     Atoms.SelectedStatus
   );
   const searchInputRef = useRef();
-  const searchHandler = () => {
-    let url = `http://127.0.0.1:8000/list/?`;
+  const searchHandler = (page, id) => {
+    let url =
+      page === "home"
+        ? `http://127.0.0.1:8000/list/?`
+        : `http://127.0.0.1:8000/library/${id}?`;
     if (selectedCategoryId) {
       url += `book_id__categories=${selectedCategoryId}&`;
     }
@@ -51,7 +54,7 @@ const SearchInput = (props) => {
   return (
     <Container>
       <InputField ref={searchInputRef} />
-      <IconContainer onClick={searchHandler}>
+      <IconContainer onClick={() => searchHandler(props.page, props.id)}>
         <SearchIcon />
       </IconContainer>
     </Container>
