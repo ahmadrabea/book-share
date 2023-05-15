@@ -1,1 +1,2 @@
-finish add book , edit book , notifications , book rating 
+finish accept/reject(create notification) , 
+confirm email , fix design bugs

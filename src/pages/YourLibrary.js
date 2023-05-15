@@ -28,7 +28,7 @@ const YourLibrary = () => {
   useEffect(() => {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    const userId = urlParams.get("userid");
+    const userId = urlParams.get("userId");
     setUserId(userId);
     window.scrollTo(0, 0);
     fetch(`http://127.0.0.1:8000/library/${userId}/`, {
@@ -49,7 +49,6 @@ const YourLibrary = () => {
     setCards(filteredCards);
   }, [filteredCards]);
 
-  const dummyArray = [0, 0, 0, 0];
   return (
     <>
       <Header></Header>
@@ -84,6 +83,7 @@ const YourLibrary = () => {
                   return (
                     <FeedCard
                       key={item.id}
+                      bookId={item.id}
                       category={item.book_id.categories_name}
                       avgRating={item.book_id.avg_rating}
                       numberRating={item.book_id.number_rating}

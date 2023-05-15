@@ -2,27 +2,18 @@ import React from "react";
 import { Row } from "../../Utils/Utils";
 import styled from "styled-components";
 import colors from "../../assets/colors";
-import { useNavigate } from "react-router-dom";
 
-const ISBNCard = (props) => {
-  const navigate = useNavigate();
+const EmptyCard = (props) => {
   return (
     <Wrapper>
       <Row>
-        <span className="content">
-          {props.isbn} , {props.title} , {props.author}
-        </span>
-        <AddButton
-          onClick={() => navigate(`/editBookForm?bookId=${props.bookId}`)}
-        >
-          Add
-        </AddButton>
+        <span className="content">No Results Found</span>
       </Row>
     </Wrapper>
   );
 };
 
-export default ISBNCard;
+export default EmptyCard;
 
 const Wrapper = styled.div`
   margin-top: 15px;

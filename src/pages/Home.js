@@ -88,6 +88,7 @@ const Home = () => {
                   return (
                     <FeedCard
                       key={item.id}
+                      bookId={item.id}
                       category={item.book_id.categories_name}
                       avgRating={item.book_id.avg_rating}
                       numberRating={item.book_id.number_rating}

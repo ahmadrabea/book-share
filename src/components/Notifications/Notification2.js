@@ -7,7 +7,7 @@ import { ReactComponent as DeleteIcon } from "../../assets/icons/delete.svg";
 import colors from "../../assets/colors";
 import { Column, Row } from "../../Utils/Utils";
 
-export default function Notification1() {
+export default function Notification1({ content }) {
   const textRef = useRef();
 
   const setTemplate = (e) => {
@@ -27,7 +27,7 @@ Address: 123 Main Street, Anytown USA 12345`;
           <Row>
             <Row>
               <span className="title">
-                Ahmad Ali wants to borrow Rich Dad Poor Dad book
+                {`${content.sender_name} wants to borrow ${content.book_name}`}
               </span>
             </Row>
             <Row>

@@ -6,7 +6,7 @@ import { ReactComponent as DeleteIcon } from "../../assets/icons/delete.svg";
 
 import colors from "../../assets/colors";
 
-export default function Notification1({ type, text }) {
+export default function Notification1({ type, content }) {
   // type : true : green , false : red
   return (
     <>
@@ -16,7 +16,7 @@ export default function Notification1({ type, text }) {
         ) : (
           <Error className="icon false" />
         )}
-        <span className="info"> {text}</span>
+        <span className="info">{`Your request to borrow ${content.book_name} has been ${content.type}ed`}</span>
         <DeleteButton>
           <DeleteIcon />
         </DeleteButton>

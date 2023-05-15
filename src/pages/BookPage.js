@@ -19,22 +19,49 @@ import RatingStars from "../components/helper/StarsRating";
 import { useRecoilState } from "recoil";
 import Atoms from "../Atoms/Atoms";
 import FeedCardEmpty from "../components/FeedCard/FeedCardEmpty";
+import BookCard from "../components/FeedCard/BookCard";
+import { useParams } from "react-router-dom";
 
-const LibraryPage = () => {
+const BookPage = () => {
+  //   const bookInfo = {
+  //     id: 1,
+  //     book_id: {
+  //       id: 1,
+  //       avg_rating: "0",
+  //       number_rating: "0",
+  //       categories_name: ["tech", "AI"],
+  //       book_name: "Hands-On Machine Learning",
+  //       author: "Aurelien Geron",
+  //       publisher: "O'Reilly Media",
+  //       description:
+  //         "Hands-On Machine Learning with ScikitLearn, Keras, and TensorFlow is a book written by Aurélien Géron. The book provides a comprehensive introduction to machine learning and deep learning technique",
+  //       ISBN: 1254982,
+  //       year: 2022,
+  //     },
+  //     book_owner_id: {
+  //       id: 4,
+  //       full_name: "Ali Samr",
+  //       user_image_url: "http://127.0.0.1:8000/media/default_user.png",
+  //     },
+  //     book_image_url: "http://127.0.0.1:8000/media/default_book.png",
+  //     status: true,
+  //   };
   const [token, setToken] = useState(getCookie());
-  const [userData, setUserData] = useState();
-  const [userRating, setUserRating] = useState();
-  const [cards, setCards] = useState([]);
-  const [userId, setUserId] = useState();
-  const [filteredCards, setFilteredCards] = useRecoilState(Atoms.cards);
-
+  const [bookRating, setBookRating] = useState();
+  const [bookId, setBookId] = useState();
+  const [bookInfo, setBookInfo] = useState();
+  const [flagg, setFlagg] = useState(true);
+  //   const { bookId } = useParams();
+  const setFlag = () => {
+    setFlagg(!flagg);
+  };
   useEffect(() => {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    const userId = urlParams.get("userid");
-    setUserId(userId);
-    console.log("userID :", userId);
-    fetch(`http://127.0.0.1:8000/account/${userId}/`, {
+    const bookId = urlParams.get("bookId");
+    setBookId(bookId);
+    console.log("userID :", bookId);
+    fetch(`http://127.0.0.1:8000/book/${bookId}/`, {
       method: "GET",
       headers: {
         Authorization: `token ${token}`,
@@ -42,18 +69,19 @@ const LibraryPage = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        setUserData(data);
+        setBookInfo(data);
       })
+      .then(() => window.scrollTo(0, 0))
       .catch((error) => {
         console.log("someThing went wrong :", error);
       });
-  }, []);
+  }, [flagg]);
 
   useEffect(() => {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    const userId = urlParams.get("userid");
-    fetch(`http://127.0.0.1:8000/library/${userId}/get-rating/`, {
+    const bookId = urlParams.get("bookId");
+    fetch(`http://127.0.0.1:8000/book/${bookId}/get-rating/`, {
       method: "GET",
       headers: {
         Authorization: `token ${token}`,
@@ -61,42 +89,19 @@ const LibraryPage = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        setUserRating(data);
+        setBookRating(data);
       })
       .catch((error) => {
         console.log("someThing went wrong :", error);
       });
-  }, []);
-
-  useEffect(() => {
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    const userId = urlParams.get("userid");
-    window.scrollTo(0, 0);
-    fetch(`http://127.0.0.1:8000/library/${userId}/`, {
-      method: "GET",
-      headers: {
-        Authorization: `token ${token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setCards(data);
-      })
-      .catch((error) => {
-        console.log("someThing went wrong :", error);
-      });
-  }, []);
-  useEffect(() => {
-    setCards(filteredCards);
-  }, [filteredCards]);
+  }, [flagg]);
 
   const createRate = () => {
     const rating = document.querySelectorAll(".theStars .star.filled").length;
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    const userId = urlParams.get("userid");
-    fetch(`http://127.0.0.1:8000/library/${userId}/create-rating/`, {
+    const bookId = urlParams.get("bookId");
+    fetch(`http://127.0.0.1:8000/book/${bookId}/create-rating/`, {
       method: "POST",
       headers: {
         Authorization: `token ${token}`,
@@ -116,102 +121,30 @@ const LibraryPage = () => {
   return (
     <>
       <Header></Header>
-      <Cover>
-        <img src={userData?.user_image_url} />
-        <H2 className="name">{userData?.full_name}</H2>
-        <Row className="buttons">
-          <MessageButton>
-            <MailIcon />
-          </MessageButton>
-          <CallButton>
-            <CallIcon />
-          </CallButton>
-        </Row>
-      </Cover>
+
       <Container>
-        <MainWrapper>
-          <Row>
-            <RatingBox>
-              <Row>
-                <Column className="star">
-                  <Star />
-                </Column>
-                <Column className="start">
-                  <span className="rate">
-                    <span className="user-rate">{userData?.avg_rating}</span>/10
-                  </span>
-
-                  <span className="number-of-ratings">
-                    {userData?.number_rating}
-                  </span>
-                </Column>
-              </Row>
-              <Row>
-                <RatingStars initialRating={0} />
-              </Row>
-              <RateButton onClick={createRate}>Rate</RateButton>
-            </RatingBox>
-            <AboutBox>
-              <Column className="start">
-                <H2>About</H2>
-
-                <p>{userData?.about}</p>
-                <Row>
-                  <Location />
-                  <span>{userData?.address}</span>
-                </Row>
-              </Column>
-            </AboutBox>
-          </Row>
-        </MainWrapper>
+        <MainWrapper></MainWrapper>
 
         <Wrapper>
-          <Row className="start">
-            <Column>
-              <H2 style={{ width: "340px" }}>Filter Option</H2>
-            </Column>
-            <Column>
-              <H2>Books</H2>
-            </Column>
-          </Row>
-          <Row>
-            <Column>
-              <SearchInput page={"library"} id={userId} />
-            </Column>
-            <Column>
-              <Select />
-            </Column>
-          </Row>
           <Row className="alignedStart" style={{ marginTop: "20px" }}>
             <Column>
-              <StatusFilter />
-              <CategoryFilter />
-            </Column>
-            <Column>
-              {!cards.length ? (
-                <FeedCardEmpty />
-              ) : (
-                cards.map((item) => {
-                  return (
-                    <FeedCard
-                      key={item.id}
-                      bookId={item.id}
-                      category={item.book_id.categories_name}
-                      avgRating={item.book_id.avg_rating}
-                      numberRating={item.book_id.number_rating}
-                      bookName={item.book_id.book_name}
-                      publisher={item.book_id.publisher}
-                      author={item.book_id.author}
-                      description={item.book_id.description}
-                      year={item.book_id.year}
-                      bookOwnerId={item.book_owner_id.id}
-                      fullName={item.book_owner_id.full_name}
-                      userImageUrl={item.book_owner_id.user_image_url}
-                      bookImageUrl={item.book_image_url}
-                      status={item.status}
-                    />
-                  );
-                })
+              {bookInfo && bookRating && (
+                <BookCard
+                  category={bookInfo.book_id.categories_name}
+                  avgRating={bookRating.avg_rating}
+                  numberRating={bookRating.number_rating}
+                  bookName={bookInfo.book_id.book_name}
+                  publisher={bookInfo.book_id.publisher}
+                  author={bookInfo.book_id.author}
+                  description={bookInfo.book_id.description}
+                  year={bookInfo.book_id.year}
+                  bookOwnerId={bookInfo.book_owner_id.id}
+                  fullName={bookInfo.book_owner_id.full_name}
+                  userImageUrl={bookInfo.book_owner_id.user_image_url}
+                  bookImageUrl={bookInfo.book_image_url}
+                  status={bookInfo.status}
+                  createRate={createRate}
+                />
               )}
               {/* <h3>See more</h3>
               <Arrow /> */}
@@ -219,6 +152,27 @@ const LibraryPage = () => {
           </Row>
         </Wrapper>
         {/* <FeedCard></FeedCard> */}
+
+        {bookId && (
+          <SliderWrapper>
+            <Slider
+              title={"Same book in other libraries"}
+              colorClass="orange"
+              type={"same"}
+              bookId={bookId}
+              setFlag={setFlag}
+              flag={flagg}
+            />
+            <Slider
+              title={"More like this"}
+              colorClass="blue"
+              type={"more"}
+              bookId={bookId}
+              setFlag={setFlag}
+              flag={flagg}
+            />
+          </SliderWrapper>
+        )}
       </Container>
 
       <Footer />
@@ -226,7 +180,20 @@ const LibraryPage = () => {
   );
 };
 
-export default LibraryPage;
+export default BookPage;
+
+const SliderWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  padding: 0 36px;
+  width: 1400px;
+  @media (max-width: 1350px) {
+    flex-direction: column;
+    width: 100%;
+  }
+`;
 
 const Cover = styled.div`
   background-image: url("/images/Banner.png");
@@ -268,6 +235,7 @@ const MainWrapper = styled.div`
     width: 100%;
   }
 `;
+
 const RatingBox = styled.div`
   display: flex;
   flex-direction: column;

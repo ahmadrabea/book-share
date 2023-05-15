@@ -1,12 +1,30 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Header from "../components/Header/Header";
-import { Column, H2, Row } from "../Utils/Utils";
+import { Column, H2, Row, getCookie } from "../Utils/Utils";
 import Footer from "../components/Footer/Footer";
 import Notification1 from "../components/Notifications/Notification1";
 import Notification2 from "../components/Notifications/Notification2";
 
 const NotificationPage = () => {
+  const [token, setToken] = useState(getCookie());
+  const [notifications, setNotifications] = useState();
+
+  useEffect(() => {
+    fetch("http://127.0.0.1:8000/notifications/", {
+      method: "GET",
+      headers: {
+        Authorization: `token ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setNotifications(data);
+      })
+      .catch((error) => {
+        console.log("someThing went wrong :", error);
+      });
+  }, []);
   return (
     <>
       <Header></Header>
@@ -14,20 +32,18 @@ const NotificationPage = () => {
         <Wrapper>
           <Column className="start">
             <H2 className="mb50">Notifications</H2>
-            <Notification1
-              type={true}
-              text={
-                "Your request to borrow Rich Dad Poor Dad has been accepted"
-              }
-            />
-            <Notification1
-              type={false}
-              text={
-                "Your request to borrow Rich Dad Poor Dad has been rejected"
-              }
-            />
-            <Notification2 />
-            <Notification2 />
+            {notifications &&
+              notifications.map((item) => {
+                if (item.type === "accept") {
+                  return <Notification1 type={true} content={item} />;
+                } else if (item.type === "reject") {
+                  return <Notification1 type={false} content={item} />;
+                } else if (item.type === "borrow_request") {
+                  return <Notification2 content={item} />;
+                } else {
+                  return <p></p>;
+                }
+              })}
           </Column>
         </Wrapper>
       </Container>

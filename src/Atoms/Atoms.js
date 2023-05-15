@@ -29,6 +29,10 @@ const Atoms = {
     key: "cards",
     default: [],
   }),
+  bookCategories: atom({
+    key: "bookCategories",
+    default: [],
+  }),
 };
 
 export default Atoms;

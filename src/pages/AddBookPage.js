@@ -1,12 +1,41 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import Header from "../components/Header/Header";
-import { Column, H2, Row } from "../Utils/Utils";
+import { Column, H2, Row, getCookie } from "../Utils/Utils";
 import Footer from "../components/Footer/Footer";
 import colors from "../assets/colors";
 import ISBNCard from "../components/AddBook/ISBNCard";
+import EmptyCard from "../components/AddBook/EmptyCard";
+import { useNavigate } from "react-router-dom";
 
 const AddBookPage = () => {
+  const [token, setToken] = useState(getCookie());
+  const [books, setBooks] = useState();
+  const [flag, setFlag] = useState(false);
+  const searchRef = useRef();
+  const navigate = useNavigate();
+  const search = () => {
+    fetch(
+      `http://127.0.0.1:8000/book-search/?search=${searchRef.current.value}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `token ${token}`,
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        setBooks(data);
+        return data;
+      })
+      .then((books) => {
+        setFlag(!books.length);
+      })
+      .catch((error) => {
+        console.log("someThing went wrong :", error);
+      });
+  };
   return (
     <>
       <Header></Header>
@@ -19,14 +48,24 @@ const AddBookPage = () => {
               if you don't find your book , you can add a new book
             </span>
             <Row>
-              <InputField />
-              <SearchButton>Search</SearchButton>
-              <NewButton>New</NewButton>
+              <InputField ref={searchRef} />
+              <SearchButton onClick={search}>Search</SearchButton>
+              <NewButton onClick={() => navigate("/addBookForm")}>
+                New
+              </NewButton>
             </Row>
             <span className="light">(ISBN , title , author)</span>
-
-            <ISBNCard />
-            <ISBNCard />
+            {books &&
+              books.map((book) => (
+                <ISBNCard
+                  key={book.id}
+                  title={book.book_name}
+                  isbn={book.ISBN}
+                  author={book.author}
+                  bookId={book.id}
+                />
+              ))}
+            {flag && <EmptyCard />}
           </Column>
         </Wrapper>
       </Container>

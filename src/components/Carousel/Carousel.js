@@ -5,15 +5,22 @@ import SliderItem from "./SliderItem";
 import React, { useEffect, useState } from "react";
 import { getCookie } from "../../Utils/Utils";
 
-const Slider = ({ title, colorClass, type }) => {
+const Slider = ({ title, colorClass, type, bookId, setFlag }) => {
   const [token, setToken] = useState(getCookie());
   const [cards, setCards] = useState([]);
 
   useEffect(() => {
-    let url =
-      type === "recommended"
-        ? "http://127.0.0.1:8000/recommended-for-you/"
-        : "http://127.0.0.1:8000/top-rated/";
+    let url;
+    if (type === "recommended") {
+      url = "http://127.0.0.1:8000/recommended-for-you/";
+    } else if (type === "topRated") {
+      url = "http://127.0.0.1:8000/top-rated/";
+    } else if (type === "same") {
+      url = `http://127.0.0.1:8000/book/${bookId}/same-book/`;
+    } else if (type === "more") {
+      url = `http://127.0.0.1:8000/book/${bookId}/more-like`;
+    }
+
     fetch(url, {
       method: "GET",
       headers: {
@@ -24,24 +31,33 @@ const Slider = ({ title, colorClass, type }) => {
       .then((data) => {
         setCards(data);
       })
+      .then(() => console.log(cards))
       .catch((error) => {
         console.log("someThing went wrong :", error);
       });
-  }, []);
+  }, [bookId]);
   return (
-    <CarouselContainer className={colorClass}>
-      <Title>{title}</Title>
-      <Carousel itemsToShow={3}>
-        {cards.map((item) => (
-          <SliderItem
-            title={item.book_name}
-            cover={item.image_url}
-            category={item.categories__category}
-            key={item.user_book_id}
-          />
-        ))}
-      </Carousel>
-    </CarouselContainer>
+    <>
+      {cards.length ? (
+        <CarouselContainer className={colorClass}>
+          <Title>{title}</Title>
+          <Carousel itemsToShow={3}>
+            {cards.map((item) => (
+              <SliderItem
+                title={item.book_name}
+                cover={item.image_url}
+                category={item.categories__category}
+                key={item.user_book_id}
+                bookId={item.user_book_id}
+                setFlag={setFlag}
+              />
+            ))}
+          </Carousel>
+        </CarouselContainer>
+      ) : (
+        <p></p>
+      )}
+    </>
   );
 };
 

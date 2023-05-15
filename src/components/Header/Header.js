@@ -30,6 +30,9 @@ const Header = () => {
   const handleNotification = () => {
     navigate("/notifications");
   };
+  const goToAddBookPage = () => {
+    navigate("/addBook");
+  };
   return (
     <Nav>
       <Container>
@@ -72,7 +75,7 @@ const Header = () => {
                   <img src={userInfo.user_image_url}></img>
                   {isUserAccountDropDownDisplayed && <UserAccountDropDown />}
                 </UserAccount>
-                <AddBook>
+                <AddBook onClick={goToAddBookPage}>
                   <div>
                     <img src="/images/add-book-icon.png" />
                   </div>

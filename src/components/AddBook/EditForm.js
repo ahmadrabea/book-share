@@ -12,7 +12,7 @@ import { useEffect } from "react";
 import RatingStars from "../helper/StarsRating";
 import SelectCategory from "./SelectCategory";
 
-export default function Form() {
+export default function EditForm() {
   const bookName = useRef();
   const author = useRef();
   const publisher = useRef();
@@ -28,14 +28,29 @@ export default function Form() {
 
   const [token, setToken] = useState(getCookie());
   const [emptyFile, setEmptyFile] = useState();
-  const [userInfo, setUserInfo] = useState(
-    JSON.parse(localStorage.getItem("userInfo"))
-  );
-  const [userId, setUserId] = useState(
-    JSON.parse(localStorage.getItem("userId"))
-  );
+  const [bookInfo, setBookInfo] = useState();
   const [message, setMessage] = useState("");
   const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
+
+  useEffect(() => {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const bookId = urlParams.get("bookId");
+    // setBookId(bookId);
+    fetch(`http://127.0.0.1:8000/book/${bookId}/`, {
+      method: "GET",
+      headers: {
+        Authorization: `token ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setBookInfo(data);
+      })
+      .catch((error) => {
+        console.log("someThing went wrong :", error);
+      });
+  }, []);
 
   const handleImageChange = () => {
     const file = imageInputRef.current.files[0];
@@ -50,7 +65,7 @@ export default function Form() {
   const handleSuccessfulSave = () => {
     setMessage({
       type: true,
-      content: "book information has been saved Successfully",
+      content: "book information has been updated Successfully",
     });
 
     setTimeout(() => {
@@ -70,6 +85,7 @@ export default function Form() {
 
     const formData = new FormData();
     console.log(bookCategories);
+    formData.append("book_id", bookInfo?.book_id.id);
     formData.append("book_name", bookName.current.value);
     formData.append("author", author.current.value);
     formData.append("publisher", publisher.current.value);
@@ -78,13 +94,10 @@ export default function Form() {
     formData.append("ISBN", isbn.current.value);
     formData.append("categories", bookCategories);
     formData.append("rating", rating);
-    formData.append(
-      "book_image_url",
-      imageInputRef.current.files[0] || emptyFile
-    );
+    formData.append("image", imageInputRef.current.files[0] || emptyFile);
     console.log(formData);
 
-    fetch("http://127.0.0.1:8000/add-new/", {
+    fetch("http://127.0.0.1:8000/add-edit/", {
       method: "POST",
       headers: {
         Authorization: `token ${token}`,
@@ -112,6 +125,17 @@ export default function Form() {
         console.log("someThing went wrong :", error);
       });
   };
+
+  useEffect(() => {
+    document.querySelectorAll(".theStars .star").forEach((star, idx) => {
+      if (idx < bookInfo?.book_id.avg_rating) {
+        star.classList.add("filled");
+        star.classList.remove("blank");
+      }
+    });
+
+    setImagePreviewUrl(bookInfo?.book_image_url);
+  }, [bookInfo]);
 
   return (
     <>
@@ -143,19 +167,40 @@ export default function Form() {
               </DeleteButton>
             </Column>
             <Column className="gap25">
-              <InputField ref={bookName} placeholder={"Book title"} />
-              <InputField ref={author} placeholder={"Author"} />
-              <InputField ref={publisher} placeholder={"Publisher"} />
               <InputField
+                ref={bookName}
+                placeholder={"Book title"}
+                defaultValue={bookInfo?.book_id.book_name}
+              />
+              <InputField
+                ref={author}
+                placeholder={"Author"}
+                defaultValue={bookInfo?.book_id.author}
+              />
+              <InputField
+                ref={publisher}
+                placeholder={"Publisher"}
+                defaultValue={bookInfo?.book_id.publisher}
+              />
+              <TextAreaField
                 ref={description}
                 className="big"
                 placeholder={"Description"}
+                defaultValue={bookInfo?.book_id.description}
               />
             </Column>
             <Column className="gap25">
               <RatingStars initialRating={0} />
-              <InputField ref={year} placeholder={"Year"} />
-              <InputField ref={isbn} placeholder={"ISBN"} />
+              <InputField
+                ref={year}
+                placeholder={"Year"}
+                defaultValue={bookInfo?.book_id.year}
+              />
+              <InputField
+                ref={isbn}
+                placeholder={"ISBN"}
+                defaultValue={bookInfo?.book_id.ISBN}
+              />
               <SelectCategory />
             </Column>
           </Row>
@@ -172,6 +217,20 @@ const InputField = styled.input`
   border: 2px solid ${colors.lightGray};
   border-radius: 15px;
   font-size: 20px;
+  &:focus {
+    outline-color: ${colors.secondary};
+  }
+  &.big {
+    height: 100px;
+  }
+`;
+const TextAreaField = styled.textarea`
+  max-width: 420px !important ;
+  height: 45px !important;
+  padding: 10px !important;
+  border: 2px solid ${colors.lightGray} !important;
+  border-radius: 15px !important;
+  font-size: 20px !important;
   &:focus {
     outline-color: ${colors.secondary};
   }

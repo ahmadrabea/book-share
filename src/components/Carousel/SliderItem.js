@@ -1,11 +1,20 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 const SliderItem = (props) => {
+  const navigate = useNavigate();
   return (
     <CardWrapper>
       <Card>
-        <img src={props.cover} alt="Book Cover" />
+        <img
+          src={props.cover}
+          alt="Book Cover"
+          onClick={() => {
+            navigate(`/bookPage?bookId=${props.bookId}`);
+            props.setFlag();
+          }}
+        />
       </Card>
       <BookName>{props.title}</BookName>
       <Tags>{props.category}</Tags>
@@ -25,6 +34,7 @@ const Card = styled.div`
   img {
     height: 100%;
     width: 100%;
+    cursor: pointer;
   }
 `;
 

@@ -17,6 +17,8 @@ import LibraryPage from "../pages/LibraryPage";
 import YourLibrary from "../pages/YourLibrary";
 import AddBookPage from "../pages/AddBookPage";
 import AddBookForm from "../pages/AddBookForm";
+import BookPage from "../pages/BookPage";
+import EditBookForm from "../pages/EditBookForm";
 
 const router = createBrowserRouter([
   {
@@ -62,6 +64,14 @@ const router = createBrowserRouter([
   {
     path: "/addBookForm",
     element: <AddBookForm />,
+  },
+  {
+    path: "/editBookForm",
+    element: <EditBookForm />,
+  },
+  {
+    path: "/bookPage",
+    element: <BookPage />,
   },
 ]);
 

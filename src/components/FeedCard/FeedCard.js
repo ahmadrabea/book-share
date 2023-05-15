@@ -1,21 +1,59 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import colors from "../../assets/colors";
 import { ReactComponent as Heart } from "../../assets/icons/heart.svg";
 import { ReactComponent as Star } from "../../assets/icons/star.svg";
-import { Row, Column } from "../../Utils/Utils";
-import { useNavigate } from "react-router-dom";
+import { Row, Column, getCookie } from "../../Utils/Utils";
+import { json, useNavigate } from "react-router-dom";
+import { ReactComponent as Eye } from "../../assets/icons/eye.svg";
+import { ReactComponent as DeleteIcon } from "../../assets/icons/delete.svg";
+import { ReactComponent as PenIcon } from "../../assets/icons/pen.svg";
 
 const FeedCard = (props) => {
   const navigate = useNavigate();
+  const [token, setToken] = useState(getCookie());
+  const [status, setStatus] = useState(props.status);
+  const [isMine, setIsMine] = useState(false);
 
   const goToUser = (id) => {
     navigate(`/library?userid=${id}`);
   };
+  const goToBook = (id) => {
+    navigate(`/bookPage?bookId=${id}`);
+  };
+  const borrowRequest = () => {
+    fetch("http://127.0.0.1:8000/create-notification/", {
+      method: "POST",
+      headers: {
+        Authorization: `token ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        user_book_id: props.bookOwnerId,
+        type: "borrow_request",
+        message: "",
+      }),
+    })
+      .then((res) => {
+        if (res.ok) setStatus(false);
+      })
+      .catch((error) => {
+        console.log("someThing went wrong :", error);
+      });
+  };
+
+  useEffect(() => {
+    if (window.location.href.includes("myLibrary")) {
+      setIsMine(true);
+    }
+  }, []);
   return (
     <FeedCardContainer>
       <LeftBlock>
-        <img src={props.bookImageUrl || "https://placehold.co/210x300"} />
+        <img
+          src={props.bookImageUrl || "https://placehold.co/210x300"}
+          onClick={() => goToBook(props.bookId)}
+        />
       </LeftBlock>
       <RightBlock>
         <Row>
@@ -65,18 +103,38 @@ const FeedCard = (props) => {
               </Column>
             </Row>
           </Column>
-          <Row className="gap20">
-            <UserImage
-              onClick={() => goToUser(props.bookOwnerId)}
-              src={props.userImageUrl}
-            />
-            <BorrowRequest className={props.status ? "" : "borrowed"}>
-              {props.status ? "Borrow Request" : "Already borrowed"}
-            </BorrowRequest>
-            <Save>
-              <Heart />
-            </Save>
-          </Row>
+
+          {isMine ? (
+            <Row className="gap20">
+              {" "}
+              <Repost>
+                <Eye />
+                Repost
+              </Repost>
+              <EditButton>
+                <PenIcon />
+              </EditButton>
+              <DeleteButton>
+                <DeleteIcon />
+              </DeleteButton>{" "}
+            </Row>
+          ) : (
+            <Row className="gap20">
+              <UserImage
+                onClick={() => goToUser(props.bookOwnerId)}
+                src={props.userImageUrl}
+              />
+              <BorrowRequest
+                className={status ? "" : "borrowed"}
+                onClick={borrowRequest}
+              >
+                {status ? "Borrow Request" : "Already borrowed"}
+              </BorrowRequest>
+              <Save>
+                <Heart />
+              </Save>
+            </Row>
+          )}
         </Row>
       </RightBlock>
     </FeedCardContainer>
@@ -103,6 +161,7 @@ const LeftBlock = styled.div`
     height: 300px;
     width: 210px;
     object-fit: cover;
+    cursor: pointer;
   }
 `;
 const RightBlock = styled.div`
@@ -166,6 +225,7 @@ const UserImage = styled.img`
 `;
 const BorrowRequest = styled.button`
   font-size: 20px;
+
   width: 180px;
   height: 60px;
   background-color: ${colors.secondary};
@@ -178,6 +238,29 @@ const BorrowRequest = styled.button`
     color: ${colors.secondary};
     background-color: ${colors.primary};
     cursor: not-allowed;
+  }
+`;
+const Repost = styled.button`
+  font-size: 20px;
+  position: relative;
+  width: 150px;
+  height: 60px;
+  background-color: ${colors.secondary};
+  border-radius: 20px;
+  color: white;
+  border: none;
+  font-weight: 600;
+  padding-left: 30px;
+  cursor: pointer;
+  &.borrowed {
+    color: ${colors.secondary};
+    background-color: ${colors.primary};
+    cursor: not-allowed;
+  }
+  svg {
+    position: absolute;
+    top: 19px;
+    left: 20px;
   }
 `;
 
@@ -194,5 +277,34 @@ const Save = styled.button`
   }
   path {
     fill: white;
+  }
+`;
+export const DeleteButton = styled.button`
+  width: 60px;
+  height: 60px;
+  border-radius: 15px;
+  background-color: ${colors.redBg};
+  border: none;
+  padding-top: 5px;
+  box-shadow: white;
+  text-decoration: none;
+  cursor: pointer;
+  path {
+    fill: ${colors.redBoarder};
+  }
+`;
+export const EditButton = styled.button`
+  width: 60px;
+  height: 60px;
+  border-radius: 15px;
+  background-color: ${colors.primary};
+  border: none;
+  padding-top: 5px;
+  box-shadow: white;
+  text-decoration: none;
+  cursor: pointer;
+  path {
+    fill: ${colors.secondary};
+    stroke: ${colors.secondary};
   }
 `;
