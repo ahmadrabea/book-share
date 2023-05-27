@@ -8,34 +8,49 @@ import { json, useNavigate } from "react-router-dom";
 import { ReactComponent as Eye } from "../../assets/icons/eye.svg";
 import { ReactComponent as DeleteIcon } from "../../assets/icons/delete.svg";
 import { ReactComponent as PenIcon } from "../../assets/icons/pen.svg";
+import Message from "../Message/Message";
 
 const FeedCard = (props) => {
   const navigate = useNavigate();
   const [token, setToken] = useState(getCookie());
   const [status, setStatus] = useState(props.status);
   const [isMine, setIsMine] = useState(false);
+  const [message, setMessage] = useState("");
 
   const goToUser = (id) => {
     navigate(`/library?userid=${id}`);
+  };
+  const handleEdit = (id) => {
+    navigate(`/editBookForm?bookId=${id}`);
   };
   const goToBook = (id) => {
     navigate(`/bookPage?bookId=${id}`);
   };
   const borrowRequest = () => {
-    fetch("http://127.0.0.1:8000/create-notification/", {
+    fetch("https://octopus-app-lk2sv.ondigitalocean.app/create-notification/", {
       method: "POST",
       headers: {
         Authorization: `token ${token}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        user_book_id: props.bookOwnerId,
+        user_book_id: props.bookId,
         type: "borrow_request",
         message: "",
       }),
     })
       .then((res) => {
-        if (res.ok) setStatus(false);
+        if (res.ok) {
+          setMessage({
+            type: true,
+            content: "borrow request has been sent",
+          });
+        } else {
+          setMessage({
+            type: false,
+            content: "something went wrong",
+          });
+        }
       })
       .catch((error) => {
         console.log("someThing went wrong :", error);
@@ -48,96 +63,99 @@ const FeedCard = (props) => {
     }
   }, []);
   return (
-    <FeedCardContainer>
-      <LeftBlock>
-        <img
-          src={props.bookImageUrl || "https://placehold.co/210x300"}
-          onClick={() => goToBook(props.bookId)}
-        />
-      </LeftBlock>
-      <RightBlock>
-        <Row>
-          <Column className="start">
-            <h1 className="book-title">{props.bookName}</h1>
-            <Row>
-              {props.category.map((item, idx) => {
-                let lastIdx = props.category.length - 1;
-                return (
-                  <span className="category">
-                    {item}
-                    {idx === lastIdx ? "" : ", "}
-                  </span>
-                );
-              })}
-            </Row>
-          </Column>
+    <>
+      {message && <Message type={message.type} text={message.content} />}
+      <FeedCardContainer>
+        <LeftBlock>
+          <img
+            src={props.bookImageUrl || "https://placehold.co/210x300"}
+            onClick={() => goToBook(props.bookId)}
+          />
+        </LeftBlock>
+        <RightBlock>
           <Row>
-            <Column className="star">
-              <Star />
-            </Column>
             <Column className="start">
-              <span className="rate">
-                <span className="user-rate">{props.avgRating}</span>/10
-              </span>
-              <span className="number-of-ratings">{props.numberRating}</span>
+              <h1 className="book-title">{props.bookName}</h1>
+              <Row>
+                {props.category.map((item, idx) => {
+                  let lastIdx = props.category.length - 1;
+                  return (
+                    <span className="category">
+                      {item}
+                      {idx === lastIdx ? "" : ", "}
+                    </span>
+                  );
+                })}
+              </Row>
             </Column>
-          </Row>
-        </Row>
-        <Row>
-          <p className="description">{props.description}</p>
-        </Row>
-        <Row>
-          <Column>
             <Row>
-              <Column className="start mr">
-                <span className="title">Author</span>
-                <span className="value">{props.author}</span>
+              <Column className="star">
+                <Star />
               </Column>
-              <Column className="start mr">
-                <span className="title">Publisher</span>
-                <span className="value">{props.publisher}</span>
-              </Column>
-              <Column className="start mr">
-                <span className="title">Year</span>
-                <span className="value">{props.year}</span>
+              <Column className="start">
+                <span className="rate">
+                  <span className="user-rate">{props.avgRating}</span>/10
+                </span>
+                <span className="number-of-ratings">{props.numberRating}</span>
               </Column>
             </Row>
-          </Column>
+          </Row>
+          <Row>
+            <p className="description">{props.description}</p>
+          </Row>
+          <Row>
+            <Column>
+              <Row>
+                <Column className="start mr">
+                  <span className="title">Author</span>
+                  <span className="value">{props.author}</span>
+                </Column>
+                <Column className="start mr">
+                  <span className="title">Publisher</span>
+                  <span className="value">{props.publisher}</span>
+                </Column>
+                <Column className="start mr">
+                  <span className="title">Year</span>
+                  <span className="value">{props.year}</span>
+                </Column>
+              </Row>
+            </Column>
 
-          {isMine ? (
-            <Row className="gap20">
-              {" "}
-              <Repost>
-                <Eye />
-                Repost
-              </Repost>
-              <EditButton>
-                <PenIcon />
-              </EditButton>
-              <DeleteButton>
-                <DeleteIcon />
-              </DeleteButton>{" "}
-            </Row>
-          ) : (
-            <Row className="gap20">
-              <UserImage
-                onClick={() => goToUser(props.bookOwnerId)}
-                src={props.userImageUrl}
-              />
-              <BorrowRequest
-                className={status ? "" : "borrowed"}
-                onClick={borrowRequest}
-              >
-                {status ? "Borrow Request" : "Already borrowed"}
-              </BorrowRequest>
-              <Save>
-                <Heart />
-              </Save>
-            </Row>
-          )}
-        </Row>
-      </RightBlock>
-    </FeedCardContainer>
+            {isMine ? (
+              <Row className="gap20">
+                {" "}
+                <Repost>
+                  <Eye />
+                  Repost
+                </Repost>
+                <EditButton onClick={() => handleEdit(props.bookId)}>
+                  <PenIcon />
+                </EditButton>
+                <DeleteButton>
+                  <DeleteIcon />
+                </DeleteButton>{" "}
+              </Row>
+            ) : (
+              <Row className="gap20">
+                <UserImage
+                  onClick={() => goToUser(props.bookOwnerId)}
+                  src={props.userImageUrl}
+                />
+                <BorrowRequest
+                  className={status ? "" : "borrowed"}
+                  onClick={borrowRequest}
+                >
+                  {status ? "Borrow Request" : "Already borrowed"}
+                </BorrowRequest>
+                <Save>
+                  <Heart />
+                </Save>
+              </Row>
+            )}
+          </Row>
+        </RightBlock>
+      </FeedCardContainer>
+    </>
   );
 };
 

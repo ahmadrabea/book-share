@@ -20,7 +20,7 @@ const CategoryFilter = (props) => {
 
   useEffect(() => {
     console.log(token);
-    fetch("http://127.0.0.1:8000/categories/", {
+    fetch("https://octopus-app-lk2sv.ondigitalocean.app/categories/", {
       method: "GET",
       headers: {
         Authorization: `token ${token}`,
@@ -51,17 +51,18 @@ const CategoryFilter = (props) => {
       </Row>
       <Row>
         <FiltersContainer className={isCategoryOpen ? "" : "closed"}>
-          {categories.map((item) => {
-            return (
-              <Category
-                className={selectedCategoryId === item.id ? "selected" : ""}
-                onClick={() => chooseFilter(item.id)}
-                key={item.id}
-              >
-                {item.category}
-              </Category>
-            );
-          })}
+          {categories.length &&
+            categories.map((item) => {
+              return (
+                <Category
+                  className={selectedCategoryId === item.id ? "selected" : ""}
+                  onClick={() => chooseFilter(item.id)}
+                  key={item.id}
+                >
+                  {item.category}
+                </Category>
+              );
+            })}
         </FiltersContainer>
       </Row>
     </Container>

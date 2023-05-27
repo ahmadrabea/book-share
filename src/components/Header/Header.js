@@ -28,7 +28,7 @@ const Header = () => {
     }
   }, []);
   const handleNotification = () => {
-    navigate("/notifications");
+    navigate(`/notifications?userId=${userId}`);
   };
   const goToAddBookPage = () => {
     navigate("/addBook");

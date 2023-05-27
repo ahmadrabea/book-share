@@ -19,19 +19,26 @@ import RatingStars from "../components/helper/StarsRating";
 import { useRecoilState } from "recoil";
 import Atoms from "../Atoms/Atoms";
 import FeedCardEmpty from "../components/FeedCard/FeedCardEmpty";
+import { useNavigate } from "react-router-dom";
 
 const YourLibrary = () => {
   const [token, setToken] = useState(getCookie());
   const [cards, setCards] = useState([]);
   const [filteredCards, setFilteredCards] = useRecoilState(Atoms.cards);
   const [userId, setUserId] = useState();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!token) {
+      navigate("/");
+    }
+  });
   useEffect(() => {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const userId = urlParams.get("userId");
     setUserId(userId);
     window.scrollTo(0, 0);
-    fetch(`http://127.0.0.1:8000/library/${userId}/`, {
+    fetch(`https://octopus-app-lk2sv.ondigitalocean.app/library/${userId}/`, {
       method: "GET",
       headers: {
         Authorization: `token ${token}`,

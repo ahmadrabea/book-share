@@ -10,12 +10,12 @@ const UserAccountDropDown = () => {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(Atoms.loggedInState);
   const [token, setToken] = useRecoilState(Atoms.tokenState);
-  
+
   const navigateToProfile = () => {
     navigate("/profile");
   };
   const handleSignOut = () => {
-    fetch("http://127.0.0.1:8000/account/logout/", {
+    fetch("https://octopus-app-lk2sv.ondigitalocean.app/account/logout/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

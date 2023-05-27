@@ -13,16 +13,22 @@ import Footer from "../components/Footer/Footer";
 import { useRecoilState } from "recoil";
 import Atoms from "../Atoms/Atoms";
 import FeedCardEmpty from "../components/FeedCard/FeedCardEmpty";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const [token, setToken] = useState(getCookie());
   const [cards, setCards] = useState([]);
   const [filteredCards, setFilteredCards] = useRecoilState(Atoms.cards);
-  const dummyArray = [0, 0, 0, 0];
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!token) {
+      navigate("/");
+    }
+  });
 
   useEffect(() => {
     console.log("scrolled");
-    fetch("http://127.0.0.1:8000/list/", {
+    fetch("https://octopus-app-lk2sv.ondigitalocean.app/list/", {
       method: "GET",
       headers: {
         Authorization: `token ${token}`,

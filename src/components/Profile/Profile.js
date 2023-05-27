@@ -23,11 +23,32 @@ export default function Profile() {
   const [userInfo, setUserInfo] = useState(
     JSON.parse(localStorage.getItem("userInfo"))
   );
+  const [data, setData] = useState();
   const [userId, setUserId] = useState(
     JSON.parse(localStorage.getItem("userId"))
   );
   const [message, setMessage] = useState("");
   const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
+  console.log(userInfo);
+
+  useEffect(() => {
+    fetch(
+      `https://octopus-app-lk2sv.ondigitalocean.app/account/${userInfo.user_id}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `token ${token}`,
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        setData(data);
+      })
+      .catch((error) => {
+        console.log("someThing went wrong :", error);
+      });
+  }, []);
 
   const handleImageChange = () => {
     const file = imageInputRef.current.files[0];
@@ -69,13 +90,16 @@ export default function Profile() {
       imageInputRef.current.files[0] || emptyFile
     );
 
-    fetch(`http://127.0.0.1:8000/account/profile/${userId}/`, {
-      method: "PATCH",
-      headers: {
-        Authorization: `token ${token}`,
-      },
-      body: formData,
-    })
+    fetch(
+      `https://octopus-app-lk2sv.ondigitalocean.app/account/profile/${userId}/`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `token ${token}`,
+        },
+        body: formData,
+      }
+    )
       .then((res) => {
         if (res.ok) {
           console.log(res);
@@ -88,7 +112,7 @@ export default function Profile() {
       .then((data) => {
         console.log(data);
         if (data) {
-          console.log(data);
+          console.log("info ", data);
           localStorage.setItem("userInfo", JSON.stringify(data));
           setUserInfo(localStorage.getItem("userInfo"));
         }
@@ -125,17 +149,40 @@ export default function Profile() {
               </DeleteButton>
             </Column>
             <Column className="gap25">
-              <InputField ref={firstName} placeholder={"First Name"} />
-              <InputField ref={email} placeholder={"Email"} />
-              <InputField ref={about} className="big" placeholder={"About"} />
+              <InputField
+                ref={firstName}
+                placeholder={"First Name"}
+                defaultValue={data?.full_name.split(" ")[0]}
+              />
+              <InputField
+                ref={email}
+                placeholder={"Email"}
+                defaultValue={data?.email}
+                autoComplete="false"
+              />
+              <InputField
+                ref={about}
+                className="big"
+                placeholder={"About"}
+                defaultValue={data?.about}
+              />
             </Column>
             <Column className="gap25">
-              <InputField ref={lastName} placeholder={"Last Name"} />
-              <InputField ref={phoneNumber} placeholder={"Phone Number"} />
+              <InputField
+                ref={lastName}
+                placeholder={"Last Name"}
+                defaultValue={data?.full_name.split(" ")[1]}
+              />
+              <InputField
+                ref={phoneNumber}
+                placeholder={"Phone Number"}
+                defaultValue={data?.phone_number}
+              />
               <InputField
                 ref={address}
                 className="big"
                 placeholder={"Address"}
+                defaultValue={data?.address}
               />
             </Column>
           </Row>

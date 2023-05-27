@@ -33,22 +33,28 @@ const Registration = () => {
   };
   const handleFailedReg = (data) => {
     if (data.email) {
-      setError(data.email);
+      setError("email :" + data.email);
     }
     if (data.first_name) {
-      setError(data.first_name);
+      setError("first name :" + data.first_name);
     }
     if (data.last_name) {
-      setError(data.last_name);
+      setError("last name :" + data.last_name);
     }
     if (data.error) {
       setError(data.error);
+    }
+    if (data.password) {
+      setError("password :" + data.password);
+    }
+    if (data.confirm_password) {
+      setError("confirm password :" + data.confirm_password);
     }
   };
 
   const handleReg = () => {
     setError("");
-    fetch("http://127.0.0.1:8000/account/register/", {
+    fetch("https://octopus-app-lk2sv.ondigitalocean.app/account/register/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -81,22 +87,36 @@ const Registration = () => {
       <ContentContainer>
         <Row className="gap20 alignedStart">
           <Column className="gap40">
-            <InputField ref={firstName} placeholder={"First Name"} />
-            <InputField ref={emailRef} placeholder={"Email"} />
+            <InputField
+              ref={firstName}
+              placeholder={"First Name *Required"}
+              required
+            />
+            <InputField
+              ref={emailRef}
+              placeholder={"Email *Required"}
+              required
+            />
             <InputField className="big" ref={address} placeholder={"Address"} />
           </Column>
           <Column className="gap40">
-            <InputField ref={lastName} placeholder={"Last Name"} />
+            <InputField
+              ref={lastName}
+              placeholder={"Last Name *Required"}
+              required
+            />
             <InputField ref={phoneNumber} placeholder={"Phone Number"} />
             <InputField
               ref={password}
-              placeholder={"Password"}
+              placeholder={"Password *Required"}
               type="password"
+              required
             />
             <InputField
               type="password"
               ref={confirmPassword}
-              placeholder={"Confirm Password"}
+              placeholder={"Confirm Password *Required"}
+              required
             />
           </Column>
         </Row>

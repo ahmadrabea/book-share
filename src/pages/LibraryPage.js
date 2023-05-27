@@ -19,6 +19,7 @@ import RatingStars from "../components/helper/StarsRating";
 import { useRecoilState } from "recoil";
 import Atoms from "../Atoms/Atoms";
 import FeedCardEmpty from "../components/FeedCard/FeedCardEmpty";
+import { useNavigate } from "react-router-dom";
 
 const LibraryPage = () => {
   const [token, setToken] = useState(getCookie());
@@ -27,6 +28,12 @@ const LibraryPage = () => {
   const [cards, setCards] = useState([]);
   const [userId, setUserId] = useState();
   const [filteredCards, setFilteredCards] = useRecoilState(Atoms.cards);
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!token) {
+      navigate("/");
+    }
+  });
 
   useEffect(() => {
     const queryString = window.location.search;
@@ -34,7 +41,7 @@ const LibraryPage = () => {
     const userId = urlParams.get("userid");
     setUserId(userId);
     console.log("userID :", userId);
-    fetch(`http://127.0.0.1:8000/account/${userId}/`, {
+    fetch(`https://octopus-app-lk2sv.ondigitalocean.app/account/${userId}/`, {
       method: "GET",
       headers: {
         Authorization: `token ${token}`,
@@ -53,12 +60,15 @@ const LibraryPage = () => {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const userId = urlParams.get("userid");
-    fetch(`http://127.0.0.1:8000/library/${userId}/get-rating/`, {
-      method: "GET",
-      headers: {
-        Authorization: `token ${token}`,
-      },
-    })
+    fetch(
+      `https://octopus-app-lk2sv.ondigitalocean.app/library/${userId}/get-rating/`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `token ${token}`,
+        },
+      }
+    )
       .then((res) => res.json())
       .then((data) => {
         setUserRating(data);
@@ -73,7 +83,7 @@ const LibraryPage = () => {
     const urlParams = new URLSearchParams(queryString);
     const userId = urlParams.get("userid");
     window.scrollTo(0, 0);
-    fetch(`http://127.0.0.1:8000/library/${userId}/`, {
+    fetch(`https://octopus-app-lk2sv.ondigitalocean.app/library/${userId}/`, {
       method: "GET",
       headers: {
         Authorization: `token ${token}`,
@@ -96,18 +106,22 @@ const LibraryPage = () => {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const userId = urlParams.get("userid");
-    fetch(`http://127.0.0.1:8000/library/${userId}/create-rating/`, {
-      method: "POST",
-      headers: {
-        Authorization: `token ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        rating: rating,
-      }),
-    })
+
+    fetch(
+      `https://octopus-app-lk2sv.ondigitalocean.app/library/${userId}/create-rating/`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `token ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          rating: rating,
+        }),
+      }
+    )
       .then((res) => res.json())
-      .then((data) => {})
+      .then((data) => setUserRating(data))
       .catch((error) => {
         console.log("someThing went wrong :", error);
       });
@@ -138,11 +152,12 @@ const LibraryPage = () => {
                 </Column>
                 <Column className="start">
                   <span className="rate">
-                    <span className="user-rate">{userData?.avg_rating}</span>/10
+                    <span className="user-rate">{userRating?.avg_rating}</span>
+                    /10
                   </span>
 
                   <span className="number-of-ratings">
-                    {userData?.number_rating}
+                    {userRating?.number_rating}
                   </span>
                 </Column>
               </Row>

@@ -1,27 +1,118 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import { ReactComponent as Tick } from "../../assets/icons/tick.svg";
 import { ReactComponent as Error } from "../../assets/icons/x.svg";
 import { ReactComponent as DeleteIcon } from "../../assets/icons/delete.svg";
 
 import colors from "../../assets/colors";
-import { Column, Row } from "../../Utils/Utils";
+import { Column, getCookie, Row } from "../../Utils/Utils";
+import Message from "../Message/Message";
 
 export default function Notification1({ content }) {
   const textRef = useRef();
+  const [token, setToken] = useState(getCookie());
+  const [data, setData] = useState();
+  const [message, setMessage] = useState("");
 
   const setTemplate = (e) => {
     textRef.current.value = e.target.innerText;
   };
+  const handleAccept = () => {
+    fetch(
+      `https://octopus-app-lk2sv.ondigitalocean.app/create-notification/ `,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `token ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_book_id: content.user_book_id,
+          receiver_id: content.sender_id,
+          type: "accept",
+          message: textRef.current.value,
+        }),
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.error) {
+          setMessage({
+            type: false,
+            content: data.error,
+          });
+        } else if (data.detail) {
+          setMessage({
+            type: true,
+            content: data.detail,
+          });
+        }
+      })
+      .catch((error) => {
+        console.log("someThing went wrong :", error);
+      });
+  };
+  const handleReject = () => {
+    fetch(
+      `https://octopus-app-lk2sv.ondigitalocean.app/create-notification/ `,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `token ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_book_id: content.user_book_id,
+          receiver_id: content.sender_id,
+          type: "reject",
+          message: textRef.current.value,
+        }),
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.error) {
+          setMessage({
+            type: false,
+            content: data.error,
+          });
+        } else if (data.detail) {
+          setMessage({
+            type: true,
+            content: data.detail,
+          });
+        }
+      })
+      .catch((error) => {
+        console.log("someThing went wrong :", error);
+      });
+  };
+
   const setContactInfo = (e) => {
-    textRef.current.value = ` Name: John Doe \n
-Email: johndoe@example.com \n
-Phone: 555-555-5555 \n
-Address: 123 Main Street, Anytown USA 12345`;
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const user_id = urlParams.get("userId");
+    fetch(`https://octopus-app-lk2sv.ondigitalocean.app/account/${user_id}`, {
+      method: "GET",
+      headers: {
+        Authorization: `token ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        textRef.current.value = ` Name: ${data?.full_name} \n
+Email: ${data?.email} \n
+Phone: ${data?.phone_number} \n
+Address: ${data?.address}`;
+      })
+      .catch((error) => {
+        console.log("someThing went wrong :", error);
+      });
   };
   // type : true : green , false : red
   return (
     <>
+      {message && <Message type={message.type} text={message.content} />}
       <Container>
         <Column className="start gap25">
           <Row>
@@ -34,8 +125,8 @@ Address: 123 Main Street, Anytown USA 12345`;
               <DeleteButton>
                 <DeleteIcon />
               </DeleteButton>
-              <AcceptButton>Accept</AcceptButton>
-              <RejectButton>Reject</RejectButton>
+              <AcceptButton onClick={handleAccept}>Accept</AcceptButton>
+              <RejectButton onClick={handleReject}>Reject</RejectButton>
             </Row>
           </Row>
           <Row>
@@ -128,6 +219,8 @@ export const Container = styled.div`
   }
   .title {
     font-size: 30px;
+    max-width: 1000px;
+    line-height: 1.2;
   }
   .gap25 {
     gap: 25px;

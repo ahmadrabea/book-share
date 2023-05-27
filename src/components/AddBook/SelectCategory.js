@@ -78,26 +78,25 @@ const SelectedItem = styled.span`
   color: ${colors.secondary};
 `;
 
-const SelectCategory = () => {
+const SelectCategory = (props) => {
   const [bookCategories, setBookCategories] = useRecoilState(
     Atoms.bookCategories
   );
   const [token, setToken] = useState(getCookie());
   const [categories, setCategories] = useState([]);
 
-  const [selectedCategories, setSelectedCategories] = useState([]);
   const [isListHidden, setIsListHidden] = useState(true);
 
   const handleCategorySelect = (category) => {
     setCategories((prevCategories) =>
       prevCategories.filter((c) => c !== category)
     );
-    setSelectedCategories((prevSelectedCategories) => [
+    props.setSelectedCategories((prevSelectedCategories) => [
       ...prevSelectedCategories,
       category,
     ]);
     setIsListHidden(true);
-    console.log(selectedCategories);
+
     setBookCategories((prevBookCategories) => [
       ...prevBookCategories,
       category.id,
@@ -108,7 +107,7 @@ const SelectCategory = () => {
     setIsListHidden(!isListHidden);
   };
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/categories/", {
+    fetch("https://octopus-app-lk2sv.ondigitalocean.app/categories/", {
       method: "GET",
       headers: {
         Authorization: `token ${token}`,
@@ -127,12 +126,12 @@ const SelectCategory = () => {
     <InputContainer>
       <DropdownContainer>
         <DropdownButton onClick={handleDisplayList}>
-          {categories.length === 0
+          {categories?.length === 0
             ? "No Categories Available"
             : "Select a Category"}
           <i className="material-icons">˅</i>
         </DropdownButton>
-        {categories.length > 0 && (
+        {categories?.length > 0 && (
           <DropdownList className={isListHidden ? "hidden" : ""}>
             {categories.map((item) => (
               <DropdownItem
@@ -145,9 +144,9 @@ const SelectCategory = () => {
           </DropdownList>
         )}
       </DropdownContainer>
-      {selectedCategories.length > 0 && (
+      {props.selectedCategories?.length > 0 && (
         <SelectedItemsContainer>
-          {selectedCategories.map((item) => (
+          {props.selectedCategories.map((item) => (
             <SelectedItem key={item.id}>{item.category} , </SelectedItem>
           ))}
         </SelectedItemsContainer>

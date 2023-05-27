@@ -36,6 +36,7 @@ export default function Form() {
   );
   const [message, setMessage] = useState("");
   const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
+  const [selectedCategories, setSelectedCategories] = useState([]);
 
   const handleImageChange = () => {
     const file = imageInputRef.current.files[0];
@@ -76,7 +77,12 @@ export default function Form() {
     formData.append("description", description.current.value);
     formData.append("year", year.current.value);
     formData.append("ISBN", isbn.current.value);
-    formData.append("categories", bookCategories);
+    formData.append(
+      "categories",
+      selectedCategories.map((category) => {
+        return category.id;
+      })
+    );
     formData.append("rating", rating);
     formData.append(
       "book_image_url",
@@ -84,7 +90,7 @@ export default function Form() {
     );
     console.log(formData);
 
-    fetch("http://127.0.0.1:8000/add-new/", {
+    fetch("https://octopus-app-lk2sv.ondigitalocean.app/add-new/", {
       method: "POST",
       headers: {
         Authorization: `token ${token}`,
@@ -156,7 +162,10 @@ export default function Form() {
               <RatingStars initialRating={0} />
               <InputField ref={year} placeholder={"Year"} />
               <InputField ref={isbn} placeholder={"ISBN"} />
-              <SelectCategory />
+              <SelectCategory
+                selectedCategories={selectedCategories}
+                setSelectedCategories={setSelectedCategories}
+              />
             </Column>
           </Row>
         </Column>

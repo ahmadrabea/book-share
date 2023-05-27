@@ -19,8 +19,8 @@ const SearchInput = (props) => {
   const searchHandler = (page, id) => {
     let url =
       page === "home"
-        ? `http://127.0.0.1:8000/list/?`
-        : `http://127.0.0.1:8000/library/${id}?`;
+        ? `https://octopus-app-lk2sv.ondigitalocean.app/list/?`
+        : `https://octopus-app-lk2sv.ondigitalocean.app/library/${id}?`;
     if (selectedCategoryId) {
       url += `book_id__categories=${selectedCategoryId}&`;
     }

@@ -15,41 +15,64 @@ const ResetPassword = () => {
   const confirmPasswordRef = useRef();
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(Atoms.loggedInState);
-  const [token, setToken] = useRecoilState(Atoms.tokenState);
+  // const [token, setToken] = useRecoilState(Atoms.tokenState);
   const [matchError, setMatchError] = useState(false);
   const [lengthError, setLengthError] = useState(false);
+  const [message, setMessage] = useState();
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const token = urlParams.get("token");
 
-  const handleSuccessfulLogin = (data) => {
-    setToken(data.token);
-    setIsLoggedIn(true);
-    navigate("/home");
-  };
-  const handleBack = () => {
-    navigate("/");
-  };
-
-  const handleResetEmail = () => {
+  const handleResetPassword = () => {
     if (passwordRef.current.value !== confirmPasswordRef.current.value) {
       setMatchError(true);
       setLengthError(false);
-    }
-
-    if (passwordRef.current.value.length < 8) {
+    } else if (passwordRef.current.value.length < 8) {
       setLengthError(true);
       setMatchError(false);
-    }
-
-    if (
+    } else if (
       passwordRef.current.value === confirmPasswordRef.current.value &&
       passwordRef.current.value.length >= 8
     ) {
       setMatchError(false);
       setLengthError(false);
+      console.log("clicked");
+      fetch(
+        "https://octopus-app-lk2sv.ondigitalocean.app/account/password-reset-confirm/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            verification_token: token,
+            password: passwordRef.current.value,
+          }),
+        }
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.detail) {
+            setMessage({
+              type: true,
+              text: data?.detail,
+            });
+            setTimeout(() => {
+              navigate("/");
+            }, 2000);
+          } else {
+            setMessage({
+              type: false,
+              text: data?.verification_token || "something went wrong !",
+            });
+          }
+        });
     }
   };
   return (
     <Container>
+      {message && <Message type={message?.type} text={message.text} />}
       {matchError && (
         <Message type={false} text={"the passwords doesn't match"} />
       )}
@@ -81,7 +104,7 @@ const ResetPassword = () => {
             placeholder={"Confirm Password"}
             type={"password"}
           />
-          <SendEmailButton onClick={handleResetEmail}>Reset</SendEmailButton>
+          <SendEmailButton onClick={handleResetPassword}>Reset</SendEmailButton>
         </Column>
       </ContentContainer>
     </Container>

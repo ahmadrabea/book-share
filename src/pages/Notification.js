@@ -5,13 +5,20 @@ import { Column, H2, Row, getCookie } from "../Utils/Utils";
 import Footer from "../components/Footer/Footer";
 import Notification1 from "../components/Notifications/Notification1";
 import Notification2 from "../components/Notifications/Notification2";
+import { useNavigate } from "react-router-dom";
 
 const NotificationPage = () => {
   const [token, setToken] = useState(getCookie());
   const [notifications, setNotifications] = useState();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!token) {
+      navigate("/");
+    }
+  });
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/notifications/", {
+    fetch("https://octopus-app-lk2sv.ondigitalocean.app/notifications/", {
       method: "GET",
       headers: {
         Authorization: `token ${token}`,
@@ -32,7 +39,7 @@ const NotificationPage = () => {
         <Wrapper>
           <Column className="start">
             <H2 className="mb50">Notifications</H2>
-            {notifications &&
+            {notifications?.length ? (
               notifications.map((item) => {
                 if (item.type === "accept") {
                   return <Notification1 type={true} content={item} />;
@@ -43,7 +50,10 @@ const NotificationPage = () => {
                 } else {
                   return <p></p>;
                 }
-              })}
+              })
+            ) : (
+              <p></p>
+            )}
           </Column>
         </Wrapper>
       </Container>

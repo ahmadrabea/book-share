@@ -3,7 +3,7 @@ import styled from "styled-components";
 import SliderItem from "./SliderItem";
 
 import React, { useEffect, useState } from "react";
-import { getCookie } from "../../Utils/Utils";
+import { H2, getCookie } from "../../Utils/Utils";
 
 const Slider = ({ title, colorClass, type, bookId, setFlag }) => {
   const [token, setToken] = useState(getCookie());
@@ -12,13 +12,13 @@ const Slider = ({ title, colorClass, type, bookId, setFlag }) => {
   useEffect(() => {
     let url;
     if (type === "recommended") {
-      url = "http://127.0.0.1:8000/recommended-for-you/";
+      url = "https://octopus-app-lk2sv.ondigitalocean.app/recommended-for-you/";
     } else if (type === "topRated") {
-      url = "http://127.0.0.1:8000/top-rated/";
+      url = "https://octopus-app-lk2sv.ondigitalocean.app/top-rated/";
     } else if (type === "same") {
-      url = `http://127.0.0.1:8000/book/${bookId}/same-book/`;
+      url = `https://octopus-app-lk2sv.ondigitalocean.app/book/${bookId}/same-book/`;
     } else if (type === "more") {
-      url = `http://127.0.0.1:8000/book/${bookId}/more-like`;
+      url = `https://octopus-app-lk2sv.ondigitalocean.app/book/${bookId}/more-like`;
     }
 
     fetch(url, {
@@ -38,25 +38,31 @@ const Slider = ({ title, colorClass, type, bookId, setFlag }) => {
   }, [bookId]);
   return (
     <>
-      {cards.length ? (
+      {
         <CarouselContainer className={colorClass}>
           <Title>{title}</Title>
           <Carousel itemsToShow={3}>
-            {cards.map((item) => (
-              <SliderItem
-                title={item.book_name}
-                cover={item.image_url}
-                category={item.categories__category}
-                key={item.user_book_id}
-                bookId={item.user_book_id}
-                setFlag={setFlag}
-              />
-            ))}
+            {cards.length ? (
+              cards.map((item) => (
+                <SliderItem
+                  title={item.book_name || item.book_id.book_name}
+                  cover={item.image_url || item.book_image_url}
+                  category={item.categories__category || item.categories_name}
+                  key={item.user_book_id}
+                  bookId={item.user_book_id || item.id}
+                  setFlag={setFlag}
+                />
+              ))
+            ) : type === "recommended" ? (
+              <H2 className="no-results">
+                You need to rate more books to get our Recommendations
+              </H2>
+            ) : (
+              <H2 className="no-results">No Results Found</H2>
+            )}
           </Carousel>
         </CarouselContainer>
-      ) : (
-        <p></p>
-      )}
+      }
     </>
   );
 };
@@ -101,6 +107,10 @@ const CarouselContainer = styled.div`
   }
   .rec-pagination {
     display: none;
+  }
+  .no-results {
+    padding: 124px 0;
+    text-align: center;
   }
 `;
 const Title = styled.span`

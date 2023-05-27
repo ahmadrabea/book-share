@@ -31,21 +31,26 @@ export default function EditForm() {
   const [bookInfo, setBookInfo] = useState();
   const [message, setMessage] = useState("");
   const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
+  const [selectedCategories, setSelectedCategories] = useState();
 
   useEffect(() => {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const bookId = urlParams.get("bookId");
     // setBookId(bookId);
-    fetch(`http://127.0.0.1:8000/book/${bookId}/`, {
-      method: "GET",
-      headers: {
-        Authorization: `token ${token}`,
-      },
-    })
+    fetch(
+      `https://octopus-app-lk2sv.ondigitalocean.app/book-general/${bookId}/`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `token ${token}`,
+        },
+      }
+    )
       .then((res) => res.json())
       .then((data) => {
         setBookInfo(data);
+        setSelectedCategories(data?.categories);
       })
       .catch((error) => {
         console.log("someThing went wrong :", error);
@@ -85,19 +90,24 @@ export default function EditForm() {
 
     const formData = new FormData();
     console.log(bookCategories);
-    formData.append("book_id", bookInfo?.book_id.id);
+    formData.append("book_id", bookInfo?.id);
     formData.append("book_name", bookName.current.value);
     formData.append("author", author.current.value);
     formData.append("publisher", publisher.current.value);
     formData.append("description", description.current.value);
     formData.append("year", year.current.value);
     formData.append("ISBN", isbn.current.value);
-    formData.append("categories", bookCategories);
+    formData.append(
+      "categories",
+      selectedCategories.map((category) => {
+        return category.id;
+      })
+    );
     formData.append("rating", rating);
     formData.append("image", imageInputRef.current.files[0] || emptyFile);
     console.log(formData);
 
-    fetch("http://127.0.0.1:8000/add-edit/", {
+    fetch("https://octopus-app-lk2sv.ondigitalocean.app/add-edit/", {
       method: "POST",
       headers: {
         Authorization: `token ${token}`,
@@ -128,7 +138,7 @@ export default function EditForm() {
 
   useEffect(() => {
     document.querySelectorAll(".theStars .star").forEach((star, idx) => {
-      if (idx < bookInfo?.book_id.avg_rating) {
+      if (idx < bookInfo?.avg_rating) {
         star.classList.add("filled");
         star.classList.remove("blank");
       }
@@ -170,23 +180,23 @@ export default function EditForm() {
               <InputField
                 ref={bookName}
                 placeholder={"Book title"}
-                defaultValue={bookInfo?.book_id.book_name}
+                defaultValue={bookInfo?.book_name}
               />
               <InputField
                 ref={author}
                 placeholder={"Author"}
-                defaultValue={bookInfo?.book_id.author}
+                defaultValue={bookInfo?.author}
               />
               <InputField
                 ref={publisher}
                 placeholder={"Publisher"}
-                defaultValue={bookInfo?.book_id.publisher}
+                defaultValue={bookInfo?.publisher}
               />
               <TextAreaField
                 ref={description}
                 className="big"
                 placeholder={"Description"}
-                defaultValue={bookInfo?.book_id.description}
+                defaultValue={bookInfo?.description}
               />
             </Column>
             <Column className="gap25">
@@ -194,14 +204,17 @@ export default function EditForm() {
               <InputField
                 ref={year}
                 placeholder={"Year"}
-                defaultValue={bookInfo?.book_id.year}
+                defaultValue={bookInfo?.year}
               />
               <InputField
                 ref={isbn}
                 placeholder={"ISBN"}
-                defaultValue={bookInfo?.book_id.ISBN}
+                defaultValue={bookInfo?.ISBN}
               />
-              <SelectCategory />
+              <SelectCategory
+                selectedCategories={selectedCategories}
+                setSelectedCategories={setSelectedCategories}
+              />
             </Column>
           </Row>
         </Column>

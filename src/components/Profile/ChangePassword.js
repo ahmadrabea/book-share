@@ -40,18 +40,21 @@ export default function ChangePassword() {
   };
 
   const handleChangePassword = () => {
-    fetch("http://127.0.0.1:8000/account/change-password/", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `token ${token}`,
-      },
-      body: JSON.stringify({
-        current_password: currentPassword.current.value,
-        new_password: newPassword.current.value,
-        confirm_new_password: confirmNewPassword.current.value,
-      }),
-    })
+    fetch(
+      "https://octopus-app-lk2sv.ondigitalocean.app/account/change-password/",
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `token ${token}`,
+        },
+        body: JSON.stringify({
+          current_password: currentPassword.current.value,
+          new_password: newPassword.current.value,
+          confirm_new_password: confirmNewPassword.current.value,
+        }),
+      }
+    )
       .then((res) => {
         if (res.ok) {
           return res.json();
@@ -79,6 +82,7 @@ export default function ChangePassword() {
               ref={currentPassword}
               type={"password"}
               placeholder={"Current Password"}
+              autoComplete="new-password"
             />
             <InputField
               ref={newPassword}

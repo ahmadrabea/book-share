@@ -20,7 +20,7 @@ import { useRecoilState } from "recoil";
 import Atoms from "../Atoms/Atoms";
 import FeedCardEmpty from "../components/FeedCard/FeedCardEmpty";
 import BookCard from "../components/FeedCard/BookCard";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const BookPage = () => {
   //   const bookInfo = {
@@ -41,9 +41,9 @@ const BookPage = () => {
   //     book_owner_id: {
   //       id: 4,
   //       full_name: "Ali Samr",
-  //       user_image_url: "http://127.0.0.1:8000/media/default_user.png",
+  //       user_image_url: "https://octopus-app-lk2sv.ondigitalocean.app/media/default_user.png",
   //     },
-  //     book_image_url: "http://127.0.0.1:8000/media/default_book.png",
+  //     book_image_url: "https://octopus-app-lk2sv.ondigitalocean.app/media/default_book.png",
   //     status: true,
   //   };
   const [token, setToken] = useState(getCookie());
@@ -51,6 +51,12 @@ const BookPage = () => {
   const [bookId, setBookId] = useState();
   const [bookInfo, setBookInfo] = useState();
   const [flagg, setFlagg] = useState(true);
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!token) {
+      navigate("/");
+    }
+  });
   //   const { bookId } = useParams();
   const setFlag = () => {
     setFlagg(!flagg);
@@ -61,7 +67,7 @@ const BookPage = () => {
     const bookId = urlParams.get("bookId");
     setBookId(bookId);
     console.log("userID :", bookId);
-    fetch(`http://127.0.0.1:8000/book/${bookId}/`, {
+    fetch(`https://octopus-app-lk2sv.ondigitalocean.app/book/${bookId}/`, {
       method: "GET",
       headers: {
         Authorization: `token ${token}`,
@@ -81,12 +87,15 @@ const BookPage = () => {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const bookId = urlParams.get("bookId");
-    fetch(`http://127.0.0.1:8000/book/${bookId}/get-rating/`, {
-      method: "GET",
-      headers: {
-        Authorization: `token ${token}`,
-      },
-    })
+    fetch(
+      `https://octopus-app-lk2sv.ondigitalocean.app/book/${bookId}/get-rating/`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `token ${token}`,
+        },
+      }
+    )
       .then((res) => res.json())
       .then((data) => {
         setBookRating(data);
@@ -101,18 +110,21 @@ const BookPage = () => {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const bookId = urlParams.get("bookId");
-    fetch(`http://127.0.0.1:8000/book/${bookId}/create-rating/`, {
-      method: "POST",
-      headers: {
-        Authorization: `token ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        rating: rating,
-      }),
-    })
+    fetch(
+      `https://octopus-app-lk2sv.ondigitalocean.app/book/${bookId}/create-rating/`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `token ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          rating: rating,
+        }),
+      }
+    )
       .then((res) => res.json())
-      .then((data) => {})
+      .then((data) => setBookRating(data))
       .catch((error) => {
         console.log("someThing went wrong :", error);
       });
@@ -130,6 +142,7 @@ const BookPage = () => {
             <Column>
               {bookInfo && bookRating && (
                 <BookCard
+                  bookId={bookInfo.id}
                   category={bookInfo.book_id.categories_name}
                   avgRating={bookRating.avg_rating}
                   numberRating={bookRating.number_rating}

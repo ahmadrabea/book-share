@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import Header from "../components/Header/Header";
 import { Column, H2, Row, getCookie } from "../Utils/Utils";
@@ -14,9 +14,14 @@ const AddBookPage = () => {
   const [flag, setFlag] = useState(false);
   const searchRef = useRef();
   const navigate = useNavigate();
+  useEffect(() => {
+    if (!token) {
+      navigate("/");
+    }
+  });
   const search = () => {
     fetch(
-      `http://127.0.0.1:8000/book-search/?search=${searchRef.current.value}`,
+      `https://octopus-app-lk2sv.ondigitalocean.app/book-search/?search=${searchRef.current.value}`,
       {
         method: "GET",
         headers: {
@@ -55,7 +60,7 @@ const AddBookPage = () => {
               </NewButton>
             </Row>
             <span className="light">(ISBN , title , author)</span>
-            {books &&
+            {books?.length ? (
               books.map((book) => (
                 <ISBNCard
                   key={book.id}
@@ -64,7 +69,10 @@ const AddBookPage = () => {
                   author={book.author}
                   bookId={book.id}
                 />
-              ))}
+              ))
+            ) : (
+              <p></p>
+            )}
             {flag && <EmptyCard />}
           </Column>
         </Wrapper>
