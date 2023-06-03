@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 const NotificationPage = () => {
   const [token, setToken] = useState(getCookie());
   const [notifications, setNotifications] = useState();
+  const [updateFlag, setUpdateFlag] = useState();
   const navigate = useNavigate();
   useEffect(() => {
     if (!token) {
@@ -18,7 +19,7 @@ const NotificationPage = () => {
   });
 
   useEffect(() => {
-    fetch("https://octopus-app-lk2sv.ondigitalocean.app/notifications/", {
+    fetch("http://127.0.0.1:8000/notifications/", {
       method: "GET",
       headers: {
         Authorization: `token ${token}`,
@@ -31,7 +32,7 @@ const NotificationPage = () => {
       .catch((error) => {
         console.log("someThing went wrong :", error);
       });
-  }, []);
+  }, [updateFlag]);
   return (
     <>
       <Header></Header>
@@ -42,7 +43,13 @@ const NotificationPage = () => {
             {notifications?.length ? (
               notifications.map((item) => {
                 if (item.type === "accept") {
-                  return <Notification1 type={true} content={item} />;
+                  return (
+                    <Notification1
+                      type={true}
+                      content={item}
+                      setUpdateFlag={setUpdateFlag}
+                    />
+                  );
                 } else if (item.type === "reject") {
                   return <Notification1 type={false} content={item} />;
                 } else if (item.type === "borrow_request") {

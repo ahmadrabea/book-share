@@ -29,6 +29,7 @@ const LibraryPage = () => {
   const [userId, setUserId] = useState();
   const [filteredCards, setFilteredCards] = useRecoilState(Atoms.cards);
   const navigate = useNavigate();
+
   useEffect(() => {
     if (!token) {
       navigate("/");
@@ -41,7 +42,7 @@ const LibraryPage = () => {
     const userId = urlParams.get("userid");
     setUserId(userId);
     console.log("userID :", userId);
-    fetch(`https://octopus-app-lk2sv.ondigitalocean.app/account/${userId}/`, {
+    fetch(`http://127.0.0.1:8000/account/${userId}/`, {
       method: "GET",
       headers: {
         Authorization: `token ${token}`,
@@ -60,15 +61,12 @@ const LibraryPage = () => {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const userId = urlParams.get("userid");
-    fetch(
-      `https://octopus-app-lk2sv.ondigitalocean.app/library/${userId}/get-rating/`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `token ${token}`,
-        },
-      }
-    )
+    fetch(`http://127.0.0.1:8000/library/${userId}/get-rating/`, {
+      method: "GET",
+      headers: {
+        Authorization: `token ${token}`,
+      },
+    })
       .then((res) => res.json())
       .then((data) => {
         setUserRating(data);
@@ -79,11 +77,20 @@ const LibraryPage = () => {
   }, []);
 
   useEffect(() => {
+    document.querySelectorAll(".theStars .star").forEach((star, idx) => {
+      if (idx < userRating?.user_rating) {
+        star.classList.add("filled");
+        star.classList.remove("blank");
+      }
+    });
+  }, [userRating]);
+
+  useEffect(() => {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const userId = urlParams.get("userid");
     window.scrollTo(0, 0);
-    fetch(`https://octopus-app-lk2sv.ondigitalocean.app/library/${userId}/`, {
+    fetch(`http://127.0.0.1:8000/library/${userId}/`, {
       method: "GET",
       headers: {
         Authorization: `token ${token}`,
@@ -107,19 +114,16 @@ const LibraryPage = () => {
     const urlParams = new URLSearchParams(queryString);
     const userId = urlParams.get("userid");
 
-    fetch(
-      `https://octopus-app-lk2sv.ondigitalocean.app/library/${userId}/create-rating/`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `token ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          rating: rating,
-        }),
-      }
-    )
+    fetch(`http://127.0.0.1:8000/library/${userId}/create-rating/`, {
+      method: "POST",
+      headers: {
+        Authorization: `token ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        rating: rating,
+      }),
+    })
       .then((res) => res.json())
       .then((data) => setUserRating(data))
       .catch((error) => {
@@ -134,10 +138,10 @@ const LibraryPage = () => {
         <img src={userData?.user_image_url} />
         <H2 className="name">{userData?.full_name}</H2>
         <Row className="buttons">
-          <MessageButton>
+          <MessageButton href={`mailto:${userData?.email}`}>
             <MailIcon />
           </MessageButton>
-          <CallButton>
+          <CallButton href={`tel:${userData?.phone_number}`}>
             <CallIcon />
           </CallButton>
         </Row>
@@ -380,7 +384,7 @@ const RateButton = styled.button`
   font-weight: 600;
   padding: 12px;
 `;
-const MessageButton = styled.button`
+const MessageButton = styled.a`
   width: 100px;
   border: none;
   border-radius: 15px;
@@ -390,8 +394,9 @@ const MessageButton = styled.button`
   font-size: 14px;
   font-weight: 600;
   padding: 10px;
+  text-align: center;
 `;
-const CallButton = styled.button`
+const CallButton = styled.a`
   width: 100px;
   border: none;
   border-radius: 15px;
@@ -401,4 +406,5 @@ const CallButton = styled.button`
   font-size: 14px;
   font-weight: 600;
   padding: 10px;
+  text-align: center;
 `;

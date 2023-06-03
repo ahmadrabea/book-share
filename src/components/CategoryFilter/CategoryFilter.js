@@ -10,9 +10,64 @@ const CategoryFilter = (props) => {
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [token, setToken] = useState(getCookie());
   const [categories, setCategories] = useState([]);
+  const [selectedStatus, setSelectedStatus] = useRecoilState(
+    Atoms.SelectedStatus
+  );
+
   const [selectedCategoryId, setSelectedCategoryId] = useRecoilState(
     Atoms.categoryId
   );
+  const [filteredCards, setFilteredCards] = useRecoilState(Atoms.cards);
+
+  const [selectedOption, setSelectedOption] = useRecoilState(Atoms.order);
+  const [searchTerm, setSearchTerm] = useRecoilState(Atoms.searchTerm);
+
+  const searchHandler = () => {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const userId = urlParams.get("userid");
+    let url = window.location.href.includes("home")
+      ? `http://127.0.0.1:8000/list/?`
+      : `http://127.0.0.1:8000/library/${userId}?`;
+    if (selectedCategoryId) {
+      url += `book_id__categories=${selectedCategoryId}&`;
+    }
+    if (selectedStatus) {
+      let status;
+      if (selectedStatus === "borrowed") {
+        status = 0;
+      } else if (selectedStatus === "notBorrowed") {
+        status = 1;
+      }
+      url += `status=${status}&`;
+    }
+
+    if (searchTerm) {
+      url += `search=${searchTerm}&`;
+    }
+    if (selectedOption) {
+      if (selectedOption === "Newest") url += `ordering=-created_at`;
+      if (selectedOption === "Oldest") url += `ordering=created_at`;
+    }
+
+    fetch(url, {
+      method: "GET",
+      headers: {
+        Authorization: `token ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setFilteredCards(data);
+      })
+      .catch((error) => {
+        console.log("someThing went wrong :", error);
+      });
+  };
+
+  useEffect(() => {
+    searchHandler();
+  }, [selectedCategoryId]);
 
   const chooseFilter = (idx) => {
     setSelectedCategoryId((prev) => (prev === idx ? "" : idx));
@@ -20,7 +75,7 @@ const CategoryFilter = (props) => {
 
   useEffect(() => {
     console.log(token);
-    fetch("https://octopus-app-lk2sv.ondigitalocean.app/categories/", {
+    fetch("http://127.0.0.1:8000/categories/", {
       method: "GET",
       headers: {
         Authorization: `token ${token}`,

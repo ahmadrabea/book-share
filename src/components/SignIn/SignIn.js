@@ -38,7 +38,7 @@ const SignIn = () => {
 
   const handleSignIn = () => {
     setError("");
-    fetch("https://octopus-app-lk2sv.ondigitalocean.app/account/login/", {
+    fetch("http://127.0.0.1:8000/account/login/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -58,7 +58,7 @@ const SignIn = () => {
       });
 
     // doRequest(
-    //   "https://octopus-app-lk2sv.ondigitalocean.app/account/login/",
+    //   "http://127.0.0.1:8000/account/login/",
     //   "POST",
     //   {
     //     username: emailRef.current.value,

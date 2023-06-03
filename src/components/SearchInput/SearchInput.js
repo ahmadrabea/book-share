@@ -7,7 +7,9 @@ import Atoms from "../../Atoms/Atoms";
 import { getCookie } from "../../Utils/Utils";
 
 const SearchInput = (props) => {
-  const [token, setToken] = useState(getCookie());
+  const searchInputRef = useRef();
+
+  const token = getCookie();
   const [selectedCategoryId, setSelectedCategoryId] = useRecoilState(
     Atoms.categoryId
   );
@@ -15,12 +17,16 @@ const SearchInput = (props) => {
   const [selectedStatus, setSelectedStatus] = useRecoilState(
     Atoms.SelectedStatus
   );
-  const searchInputRef = useRef();
-  const searchHandler = (page, id) => {
-    let url =
-      page === "home"
-        ? `https://octopus-app-lk2sv.ondigitalocean.app/list/?`
-        : `https://octopus-app-lk2sv.ondigitalocean.app/library/${id}?`;
+  const [selectedOption, setSelectedOption] = useRecoilState(Atoms.order);
+  const [searchTerm, setSearchTerm] = useRecoilState(Atoms.searchTerm);
+
+  const searchHandler = () => {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const userId = urlParams.get("userid");
+    let url = window.location.href.includes("home")
+      ? `http://127.0.0.1:8000/list/?`
+      : `http://127.0.0.1:8000/library/${userId}?`;
     if (selectedCategoryId) {
       url += `book_id__categories=${selectedCategoryId}&`;
     }
@@ -34,9 +40,14 @@ const SearchInput = (props) => {
       url += `status=${status}&`;
     }
 
-    if (searchInputRef.current.value) {
-      url += `search=${searchInputRef.current.value}`;
+    if (searchTerm) {
+      url += `search=${searchTerm}&`;
     }
+    if (selectedOption) {
+      if (selectedOption === "Newest") url += `ordering=-created_at`;
+      if (selectedOption === "Oldest") url += `ordering=created_at`;
+    }
+
     fetch(url, {
       method: "GET",
       headers: {
@@ -53,14 +64,16 @@ const SearchInput = (props) => {
   };
   return (
     <Container>
-      <InputField ref={searchInputRef} />
-      <IconContainer onClick={() => searchHandler(props.page, props.id)}>
+      <InputField
+        ref={searchInputRef}
+        onChange={() => setSearchTerm(searchInputRef.current.value)}
+      />
+      <IconContainer onClick={searchHandler}>
         <SearchIcon />
       </IconContainer>
     </Container>
   );
 };
-
 export default SearchInput;
 
 const Container = styled.div`

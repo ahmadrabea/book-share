@@ -38,19 +38,16 @@ const ResetPassword = () => {
       setMatchError(false);
       setLengthError(false);
       console.log("clicked");
-      fetch(
-        "https://octopus-app-lk2sv.ondigitalocean.app/account/password-reset-confirm/",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            verification_token: token,
-            password: passwordRef.current.value,
-          }),
-        }
-      )
+      fetch("http://127.0.0.1:8000/account/password-reset-confirm/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          verification_token: token,
+          password: passwordRef.current.value,
+        }),
+      })
         .then((res) => res.json())
         .then((data) => {
           if (data.detail) {

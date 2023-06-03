@@ -41,9 +41,9 @@ const BookPage = () => {
   //     book_owner_id: {
   //       id: 4,
   //       full_name: "Ali Samr",
-  //       user_image_url: "https://octopus-app-lk2sv.ondigitalocean.app/media/default_user.png",
+  //       user_image_url: "http://127.0.0.1:8000/media/default_user.png",
   //     },
-  //     book_image_url: "https://octopus-app-lk2sv.ondigitalocean.app/media/default_book.png",
+  //     book_image_url: "http://127.0.0.1:8000/media/default_book.png",
   //     status: true,
   //   };
   const [token, setToken] = useState(getCookie());
@@ -67,7 +67,7 @@ const BookPage = () => {
     const bookId = urlParams.get("bookId");
     setBookId(bookId);
     console.log("userID :", bookId);
-    fetch(`https://octopus-app-lk2sv.ondigitalocean.app/book/${bookId}/`, {
+    fetch(`http://127.0.0.1:8000/book/${bookId}/`, {
       method: "GET",
       headers: {
         Authorization: `token ${token}`,
@@ -87,15 +87,12 @@ const BookPage = () => {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const bookId = urlParams.get("bookId");
-    fetch(
-      `https://octopus-app-lk2sv.ondigitalocean.app/book/${bookId}/get-rating/`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `token ${token}`,
-        },
-      }
-    )
+    fetch(`http://127.0.0.1:8000/book/${bookId}/get-rating/`, {
+      method: "GET",
+      headers: {
+        Authorization: `token ${token}`,
+      },
+    })
       .then((res) => res.json())
       .then((data) => {
         setBookRating(data);
@@ -110,19 +107,16 @@ const BookPage = () => {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const bookId = urlParams.get("bookId");
-    fetch(
-      `https://octopus-app-lk2sv.ondigitalocean.app/book/${bookId}/create-rating/`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `token ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          rating: rating,
-        }),
-      }
-    )
+    fetch(`http://127.0.0.1:8000/book/${bookId}/create-rating/`, {
+      method: "POST",
+      headers: {
+        Authorization: `token ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        rating: rating,
+      }),
+    })
       .then((res) => res.json())
       .then((data) => setBookRating(data))
       .catch((error) => {

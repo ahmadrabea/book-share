@@ -90,7 +90,7 @@ export default function Form() {
     );
     console.log(formData);
 
-    fetch("https://octopus-app-lk2sv.ondigitalocean.app/add-new/", {
+    fetch("http://127.0.0.1:8000/add-new/", {
       method: "POST",
       headers: {
         Authorization: `token ${token}`,

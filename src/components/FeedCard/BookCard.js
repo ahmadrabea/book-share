@@ -14,7 +14,7 @@ const BookCard = (props) => {
   const [status, setStatus] = useState(props.status);
   const [message, setMessage] = useState("");
   const borrowRequest = () => {
-    fetch("https://octopus-app-lk2sv.ondigitalocean.app/create-notification/", {
+    fetch("http://127.0.0.1:8000/create-notification/", {
       method: "POST",
       headers: {
         Authorization: `token ${token}`,

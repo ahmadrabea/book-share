@@ -38,7 +38,7 @@ const YourLibrary = () => {
     const userId = urlParams.get("userId");
     setUserId(userId);
     window.scrollTo(0, 0);
-    fetch(`https://octopus-app-lk2sv.ondigitalocean.app/library/${userId}/`, {
+    fetch(`http://127.0.0.1:8000/library/${userId}/`, {
       method: "GET",
       headers: {
         Authorization: `token ${token}`,

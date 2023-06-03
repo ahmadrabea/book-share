@@ -18,22 +18,19 @@ export default function Notification1({ content }) {
     textRef.current.value = e.target.innerText;
   };
   const handleAccept = () => {
-    fetch(
-      `https://octopus-app-lk2sv.ondigitalocean.app/create-notification/ `,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `token ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          user_book_id: content.user_book_id,
-          receiver_id: content.sender_id,
-          type: "accept",
-          message: textRef.current.value,
-        }),
-      }
-    )
+    fetch(`http://127.0.0.1:8000/create-notification/ `, {
+      method: "POST",
+      headers: {
+        Authorization: `token ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        user_book_id: content.user_book_id,
+        receiver_id: content.sender_id,
+        type: "accept",
+        message: textRef.current.value,
+      }),
+    })
       .then((res) => res.json())
       .then((data) => {
         if (data.error) {
@@ -53,22 +50,19 @@ export default function Notification1({ content }) {
       });
   };
   const handleReject = () => {
-    fetch(
-      `https://octopus-app-lk2sv.ondigitalocean.app/create-notification/ `,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `token ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          user_book_id: content.user_book_id,
-          receiver_id: content.sender_id,
-          type: "reject",
-          message: textRef.current.value,
-        }),
-      }
-    )
+    fetch(`http://127.0.0.1:8000/create-notification/ `, {
+      method: "POST",
+      headers: {
+        Authorization: `token ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        user_book_id: content.user_book_id,
+        receiver_id: content.sender_id,
+        type: "reject",
+        message: textRef.current.value,
+      }),
+    })
       .then((res) => res.json())
       .then((data) => {
         if (data.error) {
@@ -92,7 +86,7 @@ export default function Notification1({ content }) {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const user_id = urlParams.get("userId");
-    fetch(`https://octopus-app-lk2sv.ondigitalocean.app/account/${user_id}`, {
+    fetch(`http://127.0.0.1:8000/account/${user_id}`, {
       method: "GET",
       headers: {
         Authorization: `token ${token}`,

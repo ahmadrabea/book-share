@@ -33,6 +33,14 @@ const Atoms = {
     key: "bookCategories",
     default: [],
   }),
+  order: atom({
+    key: "order",
+    default: "Newest",
+  }),
+  searchTerm: atom({
+    key: "searchTerm",
+    default: "",
+  }),
 };
 
 export default Atoms;

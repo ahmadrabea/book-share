@@ -32,15 +32,12 @@ export default function Profile() {
   console.log(userInfo);
 
   useEffect(() => {
-    fetch(
-      `https://octopus-app-lk2sv.ondigitalocean.app/account/${userInfo.user_id}`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `token ${token}`,
-        },
-      }
-    )
+    fetch(`http://127.0.0.1:8000/account/${userInfo.user_id}`, {
+      method: "GET",
+      headers: {
+        Authorization: `token ${token}`,
+      },
+    })
       .then((res) => res.json())
       .then((data) => {
         setData(data);
@@ -90,16 +87,13 @@ export default function Profile() {
       imageInputRef.current.files[0] || emptyFile
     );
 
-    fetch(
-      `https://octopus-app-lk2sv.ondigitalocean.app/account/profile/${userId}/`,
-      {
-        method: "PATCH",
-        headers: {
-          Authorization: `token ${token}`,
-        },
-        body: formData,
-      }
-    )
+    fetch(`http://127.0.0.1:8000/account/profile/${userId}/`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `token ${token}`,
+      },
+      body: formData,
+    })
       .then((res) => {
         if (res.ok) {
           console.log(res);

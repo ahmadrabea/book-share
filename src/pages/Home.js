@@ -28,7 +28,7 @@ const Home = () => {
 
   useEffect(() => {
     console.log("scrolled");
-    fetch("https://octopus-app-lk2sv.ondigitalocean.app/list/", {
+    fetch("http://127.0.0.1:8000/list/", {
       method: "GET",
       headers: {
         Authorization: `token ${token}`,

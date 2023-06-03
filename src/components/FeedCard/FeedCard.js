@@ -27,7 +27,7 @@ const FeedCard = (props) => {
     navigate(`/bookPage?bookId=${id}`);
   };
   const borrowRequest = () => {
-    fetch("https://octopus-app-lk2sv.ondigitalocean.app/create-notification/", {
+    fetch("http://127.0.0.1:8000/create-notification/", {
       method: "POST",
       headers: {
         Authorization: `token ${token}`,
@@ -118,16 +118,24 @@ const FeedCard = (props) => {
                   <span className="title">Year</span>
                   <span className="value">{props.year}</span>
                 </Column>
+                {isMine && !status && (
+                  <Column className="start mr">
+                    <span className="title">Borrowed By</span>
+                    <span className="value">Hamza Yousef</span>
+                  </Column>
+                )}
               </Row>
             </Column>
 
             {isMine ? (
               <Row className="gap20">
                 {" "}
-                <Repost>
-                  <Eye />
-                  Repost
-                </Repost>
+                {status && (
+                  <Repost>
+                    <Eye />
+                    Repost
+                  </Repost>
+                )}
                 <EditButton onClick={() => handleEdit(props.bookId)}>
                   <PenIcon />
                 </EditButton>

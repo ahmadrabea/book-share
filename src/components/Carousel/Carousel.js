@@ -12,13 +12,13 @@ const Slider = ({ title, colorClass, type, bookId, setFlag }) => {
   useEffect(() => {
     let url;
     if (type === "recommended") {
-      url = "https://octopus-app-lk2sv.ondigitalocean.app/recommended-for-you/";
+      url = "http://127.0.0.1:8000/recommended-for-you/";
     } else if (type === "topRated") {
-      url = "https://octopus-app-lk2sv.ondigitalocean.app/top-rated/";
+      url = "http://127.0.0.1:8000/top-rated/";
     } else if (type === "same") {
-      url = `https://octopus-app-lk2sv.ondigitalocean.app/book/${bookId}/same-book/`;
+      url = `http://127.0.0.1:8000/book/${bookId}/same-book/`;
     } else if (type === "more") {
-      url = `https://octopus-app-lk2sv.ondigitalocean.app/book/${bookId}/more-like`;
+      url = `http://127.0.0.1:8000/book/${bookId}/more-like`;
     }
 
     fetch(url, {
@@ -75,9 +75,9 @@ const CarouselContainer = styled.div`
   background-color: #6c5dd480;
   padding: 40px 20px 20px;
   border-radius: 60px;
-  border: 1px solid transparent;
   width: 46%;
   position: relative;
+  height: 420px;
   @media (max-width: 1350px) {
     width: 100%;
   }

@@ -1,13 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { ReactComponent as Tick } from "../../assets/icons/tick.svg";
 import { ReactComponent as Error } from "../../assets/icons/x.svg";
 import { ReactComponent as DeleteIcon } from "../../assets/icons/delete.svg";
 
 import colors from "../../assets/colors";
+import { Column, getCookie } from "../../Utils/Utils";
+import { prefix } from "@fortawesome/free-solid-svg-icons";
 
-export default function Notification1({ type, content }) {
+export default function Notification1({ type, content, setUpdateFlag }) {
+  const [token, setToken] = useState(getCookie());
+
   // type : true : green , false : red
+  const handleDelete = () => {
+    fetch(`http://127.0.0.1:8000/notification-delete/${content.id}/`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `token ${token}`,
+      },
+    })
+      .then(() => setUpdateFlag((prev) => !prev))
+      .catch((error) => {
+        console.log("someThing went wrong :", error);
+      });
+  };
   return (
     <>
       <Container className={type ? "true" : "false"}>
@@ -16,8 +32,12 @@ export default function Notification1({ type, content }) {
         ) : (
           <Error className="icon false" />
         )}
-        <span className="info">{`Your request to borrow ${content.book_name} has been ${content.type}ed`}</span>
-        <DeleteButton>
+        <Column className="start full-width">
+          <span className="info">{`Your request to borrow ${content.book_name} has been ${content.type}ed`}</span>
+          <span className="info">{content.message}</span>
+        </Column>
+
+        <DeleteButton onClick={handleDelete}>
           <DeleteIcon />
         </DeleteButton>
       </Container>
@@ -41,6 +61,9 @@ export const Container = styled.div`
     padding: 30px;
     width: 100%;
     background-color: white;
+  }
+  .full-width {
+    width: 100%;
   }
   .icon {
     height: 100%;

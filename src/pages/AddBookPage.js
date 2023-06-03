@@ -21,7 +21,7 @@ const AddBookPage = () => {
   });
   const search = () => {
     fetch(
-      `https://octopus-app-lk2sv.ondigitalocean.app/book-search/?search=${searchRef.current.value}`,
+      `http://127.0.0.1:8000/book-search/?search=${searchRef.current.value}`,
       {
         method: "GET",
         headers: {

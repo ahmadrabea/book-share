@@ -15,7 +15,7 @@ const UserAccountDropDown = () => {
     navigate("/profile");
   };
   const handleSignOut = () => {
-    fetch("https://octopus-app-lk2sv.ondigitalocean.app/account/logout/", {
+    fetch("http://127.0.0.1:8000/account/logout/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

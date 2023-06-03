@@ -38,15 +38,12 @@ export default function EditForm() {
     const urlParams = new URLSearchParams(queryString);
     const bookId = urlParams.get("bookId");
     // setBookId(bookId);
-    fetch(
-      `https://octopus-app-lk2sv.ondigitalocean.app/book-general/${bookId}/`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `token ${token}`,
-        },
-      }
-    )
+    fetch(`http://127.0.0.1:8000/book-general/${bookId}/`, {
+      method: "GET",
+      headers: {
+        Authorization: `token ${token}`,
+      },
+    })
       .then((res) => res.json())
       .then((data) => {
         setBookInfo(data);
@@ -107,7 +104,7 @@ export default function EditForm() {
     formData.append("image", imageInputRef.current.files[0] || emptyFile);
     console.log(formData);
 
-    fetch("https://octopus-app-lk2sv.ondigitalocean.app/add-edit/", {
+    fetch("http://127.0.0.1:8000/add-edit/", {
       method: "POST",
       headers: {
         Authorization: `token ${token}`,

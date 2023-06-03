@@ -107,7 +107,7 @@ const SelectCategory = (props) => {
     setIsListHidden(!isListHidden);
   };
   useEffect(() => {
-    fetch("https://octopus-app-lk2sv.ondigitalocean.app/categories/", {
+    fetch("http://127.0.0.1:8000/categories/", {
       method: "GET",
       headers: {
         Authorization: `token ${token}`,

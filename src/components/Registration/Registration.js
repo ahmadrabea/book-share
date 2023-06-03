@@ -54,7 +54,7 @@ const Registration = () => {
 
   const handleReg = () => {
     setError("");
-    fetch("https://octopus-app-lk2sv.ondigitalocean.app/account/register/", {
+    fetch("http://127.0.0.1:8000/account/register/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
