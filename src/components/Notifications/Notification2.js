@@ -29,6 +29,7 @@ export default function Notification1({ content }) {
         receiver_id: content.sender_id,
         type: "accept",
         message: textRef.current.value,
+        notification_id: content.id,
       }),
     })
       .then((res) => res.json())
@@ -61,6 +62,7 @@ export default function Notification1({ content }) {
         receiver_id: content.sender_id,
         type: "reject",
         message: textRef.current.value,
+        notification_id: content.id,
       }),
     })
       .then((res) => res.json())
