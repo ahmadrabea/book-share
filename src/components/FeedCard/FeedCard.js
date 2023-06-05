@@ -130,7 +130,7 @@ const FeedCard = (props) => {
             {isMine ? (
               <Row className="gap20">
                 {" "}
-                {status && (
+                {!status && (
                   <Repost>
                     <Eye />
                     Repost
@@ -222,7 +222,7 @@ const RightBlock = styled.div`
     margin-right: 40px;
   }
   .gap20 {
-    gap: 20px;
+    gap: 7px;
   }
   .title {
     font-size: 13px;
