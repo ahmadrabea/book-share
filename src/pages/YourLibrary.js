@@ -94,6 +94,7 @@ const YourLibrary = () => {
                     <FeedCard
                       key={item.id}
                       bookId={item.id}
+                      bookGeneralId={item.book_id.id}
                       category={item.book_id.categories_name}
                       avgRating={item.book_id.avg_rating}
                       numberRating={item.book_id.number_rating}

@@ -20,8 +20,8 @@ const FeedCard = (props) => {
   const goToUser = (id) => {
     navigate(`/library?userid=${id}`);
   };
-  const handleEdit = (id) => {
-    navigate(`/editBookForm?bookId=${id}`);
+  const handleEdit = (id, imageId) => {
+    navigate(`/editBookForm?bookId=${id}&imageId=${imageId}`);
   };
   const goToBook = (id) => {
     navigate(`/bookPage?bookId=${id}`);
@@ -191,7 +191,9 @@ const FeedCard = (props) => {
                     Repost
                   </Repost>
                 )}
-                <EditButton onClick={() => handleEdit(props.bookId)}>
+                <EditButton
+                  onClick={() => handleEdit(props.bookGeneralId, props.bookId)}
+                >
                   <PenIcon />
                 </EditButton>
                 <DeleteButton onClick={handleDeleteBook}>

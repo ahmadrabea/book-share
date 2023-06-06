@@ -58,9 +58,10 @@ export default function EditForm() {
   useEffect(() => {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    const bookId = urlParams.get("bookId");
+    const imageId = urlParams.get("imageId");
     // setBookId(bookId);
-    fetch(`http://127.0.0.1:8000/book/${bookId}/`, {
+    console.log(imageId);
+    fetch(`http://127.0.0.1:8000/book/${imageId}/`, {
       method: "GET",
       headers: {
         Authorization: `token ${token}`,
