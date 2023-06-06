@@ -26,6 +26,7 @@ const YourLibrary = () => {
   const [cards, setCards] = useState([]);
   const [filteredCards, setFilteredCards] = useRecoilState(Atoms.cards);
   const [userId, setUserId] = useState();
+  const [updateFlag, setUpdateFlag] = useState(false);
   const navigate = useNavigate();
   useEffect(() => {
     if (!token) {
@@ -47,11 +48,13 @@ const YourLibrary = () => {
       .then((res) => res.json())
       .then((data) => {
         setCards(data);
+        console.log("rendered");
       })
+      .then(() => window.scrollTo(0, 0))
       .catch((error) => {
         console.log("someThing went wrong :", error);
       });
-  }, []);
+  }, [updateFlag]);
   useEffect(() => {
     setCards(filteredCards);
   }, [filteredCards]);
@@ -104,6 +107,7 @@ const YourLibrary = () => {
                       userImageUrl={item.book_owner_id.user_image_url}
                       bookImageUrl={item.book_image_url}
                       status={item.status}
+                      setUpdateFlag={setUpdateFlag}
                     />
                   );
                 })

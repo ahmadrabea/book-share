@@ -62,6 +62,61 @@ const FeedCard = (props) => {
       setIsMine(true);
     }
   }, []);
+  const handleRepost = () => {
+    fetch(`http://127.0.0.1:8000/your-library/${props.bookId}/`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `token ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        status: "true",
+      }),
+    })
+      .then((res) => {
+        if (res.ok) {
+          setMessage({
+            type: true,
+            content: "book has been republished",
+          });
+        } else {
+          setMessage({
+            type: false,
+            content: "something went wrong",
+          });
+        }
+      })
+      .then(() => props.setUpdateFlag((prev) => !prev))
+      .catch((error) => {
+        console.log("someThing went wrong :", error);
+      });
+  };
+
+  const handleDeleteBook = () => {
+    fetch(`http://127.0.0.1:8000/your-library/${props.bookId}/`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `token ${token}`,
+      },
+    })
+      .then((res) => {
+        if (res.ok) {
+          setMessage({
+            type: true,
+            content: "book has been deleted",
+          });
+        } else {
+          setMessage({
+            type: false,
+            content: "something went wrong",
+          });
+        }
+      })
+      .then(setTimeout(() => props.setUpdateFlag((prev) => !prev), 1000))
+      .catch((error) => {
+        console.log("someThing went wrong :", error);
+      });
+  };
   return (
     <>
       {message && <Message type={message.type} text={message.content} />}
@@ -131,7 +186,7 @@ const FeedCard = (props) => {
               <Row className="gap20">
                 {" "}
                 {!status && (
-                  <Repost>
+                  <Repost onClick={handleRepost}>
                     <Eye />
                     Repost
                   </Repost>
@@ -139,7 +194,7 @@ const FeedCard = (props) => {
                 <EditButton onClick={() => handleEdit(props.bookId)}>
                   <PenIcon />
                 </EditButton>
-                <DeleteButton>
+                <DeleteButton onClick={handleDeleteBook}>
                   <DeleteIcon />
                 </DeleteButton>{" "}
               </Row>

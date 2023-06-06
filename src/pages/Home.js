@@ -20,6 +20,7 @@ const Home = () => {
   const [cards, setCards] = useState([]);
   const [filteredCards, setFilteredCards] = useRecoilState(Atoms.cards);
   const navigate = useNavigate();
+
   useEffect(() => {
     if (!token) {
       navigate("/");

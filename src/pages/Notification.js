@@ -53,7 +53,12 @@ const NotificationPage = () => {
                 } else if (item.type === "reject") {
                   return <Notification1 type={false} content={item} />;
                 } else if (item.type === "borrow_request") {
-                  return <Notification2 content={item} />;
+                  return (
+                    <Notification2
+                      content={item}
+                      setUpdateFlag={setUpdateFlag}
+                    />
+                  );
                 } else {
                   return <p></p>;
                 }

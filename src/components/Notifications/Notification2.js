@@ -8,7 +8,7 @@ import colors from "../../assets/colors";
 import { Column, getCookie, Row } from "../../Utils/Utils";
 import Message from "../Message/Message";
 
-export default function Notification1({ content }) {
+export default function Notification1({ content, setUpdateFlag }) {
   const textRef = useRef();
   const [token, setToken] = useState(getCookie());
   const [data, setData] = useState();
@@ -46,6 +46,7 @@ export default function Notification1({ content }) {
           });
         }
       })
+      .then(() => setUpdateFlag((prev) => !prev))
       .catch((error) => {
         console.log("someThing went wrong :", error);
       });
@@ -79,6 +80,7 @@ export default function Notification1({ content }) {
           });
         }
       })
+      .then(() => setUpdateFlag((prev) => !prev))
       .catch((error) => {
         console.log("someThing went wrong :", error);
       });
@@ -105,6 +107,19 @@ Address: ${data?.address}`;
         console.log("someThing went wrong :", error);
       });
   };
+
+  const handleDelete = () => {
+    fetch(`http://127.0.0.1:8000/notification-delete/${content.id}/`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `token ${token}`,
+      },
+    })
+      .then(() => setUpdateFlag((prev) => !prev))
+      .catch((error) => {
+        console.log("someThing went wrong :", error);
+      });
+  };
   // type : true : green , false : red
   return (
     <>
@@ -118,7 +133,7 @@ Address: ${data?.address}`;
               </span>
             </Row>
             <Row>
-              <DeleteButton>
+              <DeleteButton onClick={handleDelete}>
                 <DeleteIcon />
               </DeleteButton>
               <AcceptButton onClick={handleAccept}>Accept</AcceptButton>

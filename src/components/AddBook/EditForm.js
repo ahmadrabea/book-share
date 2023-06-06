@@ -31,6 +31,7 @@ export default function EditForm() {
   const [bookInfo, setBookInfo] = useState();
   const [message, setMessage] = useState("");
   const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
+  // const [imageData, setImageData] = useState(null);
   const [selectedCategories, setSelectedCategories] = useState();
 
   useEffect(() => {
@@ -48,6 +49,26 @@ export default function EditForm() {
       .then((data) => {
         setBookInfo(data);
         setSelectedCategories(data?.categories);
+      })
+      .then(() => window.scrollTo(0, 0))
+      .catch((error) => {
+        console.log("someThing went wrong :", error);
+      });
+  }, []);
+  useEffect(() => {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const bookId = urlParams.get("bookId");
+    // setBookId(bookId);
+    fetch(`http://127.0.0.1:8000/book/${bookId}/`, {
+      method: "GET",
+      headers: {
+        Authorization: `token ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setImagePreviewUrl(data?.book_image_url);
       })
       .catch((error) => {
         console.log("someThing went wrong :", error);

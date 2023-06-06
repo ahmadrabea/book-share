@@ -14,7 +14,23 @@ const SignInPage = () => {
     Atoms.successfulRegMessage
   );
   const [token, setToken] = useState(getCookie());
+  const [verificationMessage, setVerificationMessage] = useState("");
   const navigate = useNavigate();
+  useEffect(() => {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const verificationToken = urlParams.get("token");
+    fetch(`http://127.0.0.1:8000/verify-email/${verificationToken}/`, {
+      method: "GET",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setVerificationMessage(data?.success);
+      })
+      .catch((error) => {
+        console.log("someThing went wrong :", error);
+      });
+  }, []);
   useEffect(() => {
     if (token) {
       navigate("/home");
@@ -28,6 +44,9 @@ const SignInPage = () => {
         <Wrapper>
           {successfulRegMessage && (
             <Message type={true} text={successfulRegMessage} />
+          )}
+          {verificationMessage && (
+            <Message type={true} text={verificationMessage} />
           )}
           <SignIn />
         </Wrapper>
