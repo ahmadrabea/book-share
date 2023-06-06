@@ -20,7 +20,7 @@ const SignInPage = () => {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const verificationToken = urlParams.get("token");
-    fetch(`http://127.0.0.1:8000/verify-email/${verificationToken}/`, {
+    fetch(`http://127.0.0.1:8000/account/verify-email/${verificationToken}/`, {
       method: "GET",
     })
       .then((res) => res.json())
