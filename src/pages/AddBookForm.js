@@ -13,6 +13,7 @@ import Form from "../components/AddBook/Form";
 import { useNavigate } from "react-router-dom";
 
 const AddBookForm = () => {
+  console.log("hello");
   const [token, setToken] = useState(getCookie());
   const navigate = useNavigate();
   useEffect(() => {
